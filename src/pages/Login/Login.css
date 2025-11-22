@@ -1,0 +1,38 @@
+/* Background wrapper */
+.login-background {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* background image is set from inline style in the component so that bundlers resolve the asset path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* light fallback color in case the image fails to load */
+  background-color: #f8f9fa;
+}
+
+/* Card look */
+.card {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Reasonable padding for the card body (20rem was far too large) */
+.card-body {
+  padding: 2rem;
+}
+
+/* Small responsive tweak */
+@media (max-width: 400px) {
+  .card-body {
+    padding: 1.25rem;
+  }
+}

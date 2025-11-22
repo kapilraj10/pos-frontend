@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JWT Token Debugger</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        pre { background: #fff; padding: 10px; border: 1px solid #ddd; overflow-x: auto; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        .error { color: red; }
+        .success { color: green; }
+        h2 { color: #333; }
+    </style>
+</head>
+<body>
+    <h1>🔐 JWT Token & 403 Error Debugger</h1>
+    
+    <div class="section">
+        <h2>Current Token Info</h2>
+        <button onclick="analyzeToken()">Analyze Token from localStorage</button>
+        <pre id="tokenInfo">Click button to analyze...</pre>
+    </div>
+
+    <div class="section">
+        <h2>Test Backend Endpoints</h2>
+        <button onclick="testEndpoints()">Test All Endpoints</button>
+        <pre id="endpointResults">Click button to test...</pre>
+    </div>
+
+    <div class="section">
+        <h2>🚨 Backend Fix Needed</h2>
+        <p>The 403 Forbidden errors are caused by a Spring Security configuration mismatch.</p>
+        <p><strong>Your backend developer needs to fix SecurityConfig.java:</strong></p>
+        <pre>
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(auth -> auth
+            // ✅ CORRECT: Use hasRole("ADMIN") - Spring auto-adds ROLE_ prefix
+            .requestMatchers("/api/v1/pos/admin/**").hasRole("ADMIN")
+            
+            // OR use hasAuthority with full role name:
+            // .requestMatchers("/api/v1/pos/admin/**").hasAuthority("ROLE_ADMIN")
+            
+            .requestMatchers("/api/v1/pos/**").authenticated()
+            .anyRequest().permitAll()
+        )
+        // ... rest of config
+    return http.build();
+}
+        </pre>
+    </div>
+
+    <script>
+        function analyzeToken() {
+            const output = document.getElementById('tokenInfo');
+            try {
+                const token = localStorage.getItem('token');
+                const role = localStorage.getItem('role');
+                
+                if (!token) {
+                    output.innerHTML = '<span class="error">❌ No token found in localStorage. Please login first.</span>';
+                    return;
+                }
+
+                // Decode JWT
+                const parts = token.split('.');
+                const header = JSON.parse(atob(parts[0]));
+                const payload = JSON.parse(atob(parts[1]));
+                
+                // Check expiry
+                const now = Math.floor(Date.now() / 1000);
+                const expired = payload.exp && payload.exp < now;
+                
+                output.innerHTML = `
+<span class="${expired ? 'error' : 'success'}">Token Status: ${expired ? '❌ EXPIRED' : '✅ Valid'}</span>
+
+<strong>Stored Role:</strong> ${role}
+
+<strong>Token Header:</strong>
+${JSON.stringify(header, null, 2)}
+
+<strong>Token Payload:</strong>
+${JSON.stringify(payload, null, 2)}
+
+<strong>Authorities/Roles in Token:</strong>
+${JSON.stringify(payload.authorities || payload.roles || payload.auth || 'NOT FOUND', null, 2)}
+
+<strong>⚠️ Issue Detected:</strong>
+${payload.authorities?.[0] === 'ROLE_ADMIN' ? 
+    '✅ Token has ROLE_ADMIN - Backend needs hasRole("ADMIN") in SecurityConfig' : 
+    '⚠️ Token role format: ' + JSON.stringify(payload.authorities || payload.roles)}
+
+<strong>Token Preview:</strong>
+${token.substring(0, 50)}...${token.substring(token.length - 20)}
+
+<strong>Issued At:</strong> ${payload.iat ? new Date(payload.iat * 1000).toLocaleString() : 'N/A'}
+<strong>Expires At:</strong> ${payload.exp ? new Date(payload.exp * 1000).toLocaleString() : 'N/A'}
+                `;
+            } catch (error) {
+                output.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testEndpoints() {
+            const output = document.getElementById('endpointResults');
+            output.innerHTML = 'Testing endpoints...';
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                output.innerHTML = '<span class="error">❌ No token found. Please login first.</span>';
+                return;
+            }
+
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const results = [];
+
+            // Test endpoints
+            const tests = [
+                { name: 'GET /items', url: 'http://localhost:8080/api/v1/pos/items', method: 'GET' },
+                { name: 'GET /admin/items (will fail with 403)', url: 'http://localhost:8080/api/v1/pos/admin/items', method: 'GET' },
+                { name: 'GET /categories', url: 'http://localhost:8080/api/v1/pos/categories', method: 'GET' },
+                { name: 'GET /admin/categories (will fail with 403)', url: 'http://localhost:8080/api/v1/pos/admin/categories', method: 'GET' },
+            ];
+
+            for (const test of tests) {
+                try {
+                    const response = await fetch(test.url, { method: test.method, headers });
+                    const status = response.status;
+                    const statusText = response.statusText;
+                    results.push(`${status === 200 ? '✅' : '❌'} ${test.name}: ${status} ${statusText}`);
+                    
+                    if (status === 403) {
+                        const body = await response.text();
+                        results.push(`   └─ Response: ${body || 'Empty body'}`);
+                    }
+                } catch (error) {
+                    results.push(`❌ ${test.name}: ${error.message}`);
+                }
+            }
+
+            output.innerHTML = results.join('\n');
+        }
+
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            if (localStorage.getItem('token')) {
+                analyzeToken();
+            }
+        });
+    </script>
+</body>
+</html>

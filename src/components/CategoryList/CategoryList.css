@@ -1,0 +1,58 @@
+.category-list-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.category-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.category-list-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.category-list-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.category-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  border: 3px solid white;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.search-input:focus {
+  border-color: #007bff !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.delete-btn:hover {
+  background-color: #f8f9fa !important;
+  transform: scale(1.05);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .category-list-container {
+    padding: 15px;
+  }
+  
+  .category-image {
+    width: 50px;
+    height: 50px;
+  }
+}
