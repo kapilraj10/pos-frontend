@@ -102,6 +102,10 @@ const updateQuantity = (itemId, newQuantity) => {
     };
   }, []);
 
+  const clearCart = () => {
+    setCartItems([]);
+  }
+
   // Load items
   useEffect(() => {
     let mounted = true;
@@ -137,6 +141,7 @@ const updateQuantity = (itemId, newQuantity) => {
     token,
     role,
     addToCart,
+    clearCart,
     cartItems,
     updateQuantity,
     removeFromCart,
