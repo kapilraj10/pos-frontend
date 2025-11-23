@@ -1,0 +1,24 @@
+.item-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  border: 3px solid white;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.item-card:hover .item-image {
+  transform: scale(1.05);
+}

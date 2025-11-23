@@ -11,6 +11,8 @@ import "./Explore.css";
 const Explore = () => {
   const {categories} = useContext(AppContext);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [customerName, setCustomerName] = useState('');
+  const [customerMobile, setCustomerMobile] = useState('');
  
   return (
     <div className="explore-container text-light container-fluid py-3">
@@ -38,7 +40,12 @@ const Explore = () => {
           <div className="right-column bg-dark border border-light rounded-3">
             {/* Customer Form */}
             <div className="p-3 border-bottom border-secondary">
-             <CustomerForm />
+             <CustomerForm
+             customerMobile={customerMobile}
+             setCustomerMobile={setCustomerMobile}
+             customerName={customerName}
+             setCustomerName={setCustomerName}
+             />
             </div>
 
             {/* Cart Items */}
