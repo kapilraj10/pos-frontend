@@ -55,7 +55,12 @@ const Explore = () => {
 
             {/* Cart Summary */}
             <div className="cart-summary-container p-3">
-              <CartSummary />
+              <CartSummary 
+                 customerMobile={customerMobile}
+             setCustomerMobile={setCustomerMobile}
+             customerName={customerName}
+             setCustomerName={setCustomerName}
+             />
             </div>
           </div>
         </div>

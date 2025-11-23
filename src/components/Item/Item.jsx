@@ -1,7 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import './item.css'
+import { AppContext } from '../../context/AppContext'
 
-const Item = ({ itemName, itemImage, itemPrice }) => {
+const Item = ({ itemName, itemImage, itemPrice, itemId }) => {
+    const { addToCart } = useContext(AppContext);
+    
+    const handleAddToCart = () => {
+        addToCart({ 
+            name: itemName, 
+            imgUrl: itemImage, 
+            price: itemPrice, 
+            id: itemId,
+            quantity: 1
+        });
+    }
   return (
     <div className="p-3 bg-dark rounded shadow-sm h-100 d-flex align-items-center item-card">
       <div style={{ position: 'relative', marginRight: "15px" }}>
@@ -13,7 +25,7 @@ const Item = ({ itemName, itemImage, itemPrice }) => {
       </div>
       <div className="d-flex flex-column justify-content-between align-items-center ms-3" style={{ height: "100%" }}>
         <i className='bi bi-cart-plus ps-4 text-warning fs-4'></i>
-        <button className='btn btn-success btn-sm mt-2'>
+        <button className='btn btn-success btn-sm mt-2' onClick={handleAddToCart}>
           <i className='bi bi-plus'></i> 
         </button>
       </div>
