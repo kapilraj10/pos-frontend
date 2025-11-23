@@ -29,7 +29,7 @@ const CartItems = () => {
                   <button 
                     className='btn btn-danger btn-sm'
                     disabled={item.quantity === 1}
-                    onClick={() => updateQuantity(item.itemId,item.quantity -1)}
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
                   >
                     <i className='bi bi-dash'></i>
                   </button>
@@ -37,7 +37,7 @@ const CartItems = () => {
                   <span className='text-light'>{item.quantity}</span>
 
                   <button className='btn btn-success btn-sm'
-                                      onClick={() => updateQuantity(item.id,item.quantity + 1)}
+                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
                   >
                     <i className='bi bi-plus'></i>
                   </button>

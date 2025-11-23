@@ -3,7 +3,7 @@ import "./CartSummary.css";
 import { AppContext } from "../../context/AppContext";
 import ReceiptPopup from "../ReceiptPopup/ReceiptPopup.jsx";
 import { toast } from "react-toastify";
-import { createOrder } from "../../Service/OrderService.js"; 
+import { createOrder } from "../../Service/OrderService.js";
 
 const CartSummary = ({
   customerName,
@@ -28,16 +28,6 @@ const CartSummary = ({
   const clearAll = () => {
     setCustomerName("");
     setCustomerMobile("");
-    clearCart();
-  };
-
-  const placeOrder = () => {
-    setShowPopup(true);
-    clearAll();
-  };
-
-  const handlePrintReceipt = () => {
-    window.print();
   };
 
   const completePayment = async (paymentMode) => {
@@ -51,35 +41,113 @@ const CartSummary = ({
       return;
     }
 
-    const orderData = {
-      customerName,
-      customerMobile,
-      paymentMode,
-      items: cartItems.map((item) => ({
-        itemId: item.id,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-      totalAmount: grandTotal,
-    };
+    // Check if Khalti payment
+    if (paymentMode.toLowerCase() === 'khalti') {
+      toast.info("Khalti payment gateway under development");
+      return;
+    }
 
     setProcessing(true);
 
     try {
-      const response = await createOrder(orderData);
+      console.log("Cart Items at payment:", cartItems);
+      
+      // Create order details for preview (NOT posting to backend yet)
+      const orderPreview = {
+        id: `preview-${Date.now()}`,
+        customerName,
+        customerMobile,
+        paymentMode: paymentMode.toLowerCase(),
+        items: cartItems.map((item) => ({
+          itemId: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        subtotal: parseFloat(totalAmount.toFixed(2)),
+        tax: parseFloat(tax.toFixed(2)),
+        totalAmount: parseFloat(grandTotal.toFixed(2)),
+      };
 
-      if (response.status === 201 && paymentMode === "cash") {
-        toast.success("Order placed successfully");
-        setOrderDetails(response.data);
-      } else if (response.status === 201 && paymentMode === "Khalti") {
-        toast.success("Please wait, Khalti payment gateway is being integrated");
-      }
+      console.log("Order preview created:", orderPreview);
+
+      // Set order details for preview
+      setOrderDetails(orderPreview);
+      
+      // Show receipt popup for review (Cash payment only)
+      setShowPopup(true);
     } catch (err) {
-      console.error("Payment Error:", err);
-      toast.error("Payment failed. Please try again.");
+      console.error("Payment preview error:", err);
+      toast.error("Failed to process payment. Please try again.");
     } finally {
       setProcessing(false);
     }
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!orderDetails) {
+      toast.error("No order details found");
+      return;
+    }
+
+    setProcessing(true);
+
+    try {
+      // Prepare order data for backend with correct payload format
+      const orderData = {
+        customerName: orderDetails.customerName,
+        phoneNumber: orderDetails.customerMobile,
+        subTotal: orderDetails.subtotal,
+        tax: orderDetails.tax,
+        grandTotal: orderDetails.totalAmount,
+        paymentMethod: orderDetails.paymentMode.toUpperCase(),
+        cartItems: orderDetails.items.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      };
+
+      console.log("Placing order:", JSON.stringify(orderData, null, 2));
+
+      // Post order to backend
+      const response = await createOrder(orderData);
+
+      if (response && response.status === 201) {
+        // Update order details with real order ID from backend
+        const completedOrder = {
+          ...orderDetails,
+          id: response.data.id || response.data.orderId || orderDetails.id,
+        };
+
+        setOrderDetails(completedOrder);
+        
+        // Clear cart and customer info
+        clearCart();
+        clearAll();
+        
+        toast.success("Order placed successfully!");
+        
+        // Auto print after a short delay
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      } else {
+        toast.error("Failed to place order. Please try again.");
+        console.error("Unexpected response:", response);
+      }
+    } catch (err) {
+      console.error("Order placement error:", err);
+      console.error("Error response:", err.response?.data);
+      toast.error(err.response?.data?.message || "Failed to place order. Please try again.");
+      setShowPopup(false);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handlePrintReceipt = () => {
+    window.print();
   };
 
   return (
@@ -106,32 +174,31 @@ const CartSummary = ({
       <div className="d-flex gap-3">
         <button
           className="btn btn-success flex-grow-1"
-          style={{ backgroundColor: "#5D2E8E", color: "white" }}
+          style={{ backgroundColor: "#28a745", color: "white" }}
           onClick={() => completePayment("cash")}
-          disabled={isProcessing}
+          disabled={isProcessing || cartItems.length === 0}
         >
-          {isProcessing ? "Processing..." : "Cash"}
+          {isProcessing ? "Processing..." : "💵 Cash Payment"}
         </button>
 
         <button
           className="btn flex-grow-1"
           style={{ backgroundColor: "#5D2E8E", color: "white" }}
-          onClick={() => completePayment("Khalti")}
-          disabled={isProcessing}
+          onClick={() => completePayment("khalti")}
+          disabled={isProcessing || cartItems.length === 0}
         >
-          {isProcessing ? "Processing..." : "Khalti"}
+          {isProcessing ? "Processing..." : "💳 Khalti Payment"}
         </button>
       </div>
 
-      <div className="d-flex gap-3 mt-3">
-        <button
-          className="btn btn-warning flex-grow-1"
-          onClick={placeOrder}
-          disabled={isProcessing || !orderDetails}
-        >
-          Place Order
-        </button>
-      </div>
+      {showPopup && (
+        <ReceiptPopup
+          orderDetails={orderDetails}
+          onClose={() => setShowPopup(false)}
+          onPrint={handlePrintReceipt}
+          onPlaceOrder={handlePlaceOrder}
+        />
+      )}
     </div>
   );
 };

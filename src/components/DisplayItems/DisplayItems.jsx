@@ -66,6 +66,7 @@ const DisplayItems = ({ selectedCategory }) => {
               itemName={item.name}
               itemImage={item.imgUrl}
               itemPrice={item.price}
+              itemId={item.id}
             />
           </div>
         ))}
