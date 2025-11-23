@@ -1,0 +1,29 @@
+.category-card {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-hover:hover {
+  transform: translateY(-5px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.active-category {
+  position: absolute;
+  right: 16px;
+  top: 20%;
+  transform: translate(-50%);
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+.category-image {
+  width: 64px;
+  height: 64px;
+  border-radius: 10%;
+  border: 4px solid white;
+  object-fit: cover;
+}
