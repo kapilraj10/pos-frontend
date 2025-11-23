@@ -1,7 +1,8 @@
-import { useContext, useState, useRef } from 'react'
+import { useContext, useState, useRef, useEffect } from 'react'
 import Modal from 'bootstrap/js/dist/modal'
 import { AppContext } from '../../context/AppContext'
 import './CategoryList.css'
+import { fetchItems } from '../../Service/ItemService'
 
 const CategoryList = () => {
   const { categories = [], loading, error, deleteCategoryById } = useContext(AppContext)
@@ -19,12 +20,19 @@ const CategoryList = () => {
   const openConfirm = (categoryId) => {
     if (!categoryId) return
     setConfirmId(categoryId)
-    // Create or reuse a Bootstrap Modal instance (ESM import ensures availability)
     if (!modalInstanceRef.current) {
       modalInstanceRef.current = new Modal(modalRef.current, { backdrop: 'static', keyboard: false })
     }
     modalInstanceRef.current.show()
   }
+
+  const [items, setItems] = useState([]);
+
+useEffect(() => {
+  fetchItems().then(res => setItems(res.data));
+}, []);
+
+
 
   const confirmDelete = async () => {
     if (!confirmId) return
@@ -143,7 +151,7 @@ const CategoryList = () => {
                   <div className='flex-grow-1'>
                     <h5 className='mb-1 text-white fw-bold'>{cat.name}</h5>
                     <p className='mb-0 text-white-50'>
-                      {cat.itemCount || 5} Items
+                      {items.filter(item => String(item.categoryId) === String(cat.id)).length} {items.filter(item => String(item.categoryId) === String(cat.id)).length === 1 ? 'item' : 'items'}
                     </p>
                   </div>
                   

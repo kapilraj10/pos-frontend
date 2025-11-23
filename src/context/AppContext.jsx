@@ -19,6 +19,8 @@ export const AppProvider = ({ children }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [role, setRole] = useState(localStorage.getItem("role"));
 
   // Normalize category for frontend
   const normalizeCategory = (raw) => ({
@@ -105,6 +107,12 @@ export const AppProvider = ({ children }) => {
     setItems,
     loading,
     error,
+    token,
+    role,
+    setAuthData: (newToken, newRole) => {
+      setToken(newToken);
+      setRole(newRole);
+    },
 
     // Delete category
     deleteCategoryById: async (id) => {
@@ -189,7 +197,17 @@ export const AppProvider = ({ children }) => {
         if (file) formData.append("file", file);
 
         const res = await addItemApi(formData);
-        setItems((prev) => [...prev, normalizeItem(res.data)]);
+        const newItem = normalizeItem(res.data);
+        setItems((prev) => [...prev, newItem]);
+        
+        // Update the item count for the category
+        setCategories((prev) => prev.map((cat) => {
+          if (String(cat.id) === String(category)) {
+            return { ...cat, itemCount: cat.itemCount + 1 };
+          }
+          return cat;
+        }));
+        
         toast.success("Item added successfully");
       } catch (err) {
         console.error("Add item error:", err);

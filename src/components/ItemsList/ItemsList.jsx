@@ -35,7 +35,7 @@ const ItemsList = () => {
 
     try {
       await deleteItemById(itemId);
-      toast.success(`"${itemToDelete.name}" deleted successfully! 🗑️`);
+      toast.success(`"${itemToDelete.name}" deleted successfully! `);
       closeDeleteModal();
     } catch (err) {
       console.error("Delete failed:", err);
@@ -100,7 +100,7 @@ const ItemsList = () => {
                           style={{ objectFit: 'cover' }}
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = 'https://via.placeholder.com/50?text=No+Image';
+                            e.target.src = 'https://placehold.co/50x50';
                           }}
                         />
                       ) : (
@@ -121,7 +121,7 @@ const ItemsList = () => {
                         className="btn btn-sm btn-danger"
                         onClick={() => openDeleteModal(item)}
                       >
-                        🗑️ Delete
+                         Delete
                       </button>
                     </td>
                   </tr>
@@ -143,7 +143,7 @@ const ItemsList = () => {
             <div className="modal-dialog modal-dialog-centered">
               <div className="modal-content">
                 <div className="modal-header bg-danger text-white">
-                  <h5 className="modal-title">⚠️ Confirm Delete</h5>
+                  <h5 className="modal-title"> Confirm Delete</h5>
                   <button 
                     type="button" 
                     className="btn-close btn-close-white" 
@@ -161,7 +161,7 @@ const ItemsList = () => {
                     </div>
                   )}
                   <p className="text-danger mt-2 mb-0">
-                    <small>⚠️ This action cannot be undone!</small>
+                    <small>This action cannot be undone!</small>
                   </p>
                 </div>
                 <div className="modal-footer">
@@ -185,7 +185,7 @@ const ItemsList = () => {
                         Deleting...
                       </>
                     ) : (
-                      '🗑️ Yes, Delete'
+                      'Yes, Delete'
                     )}
                   </button>
                 </div>
