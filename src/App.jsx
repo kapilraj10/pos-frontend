@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import Menubar from './components/Menubar/Menubar'
 import RoleIndicator from './components/RoleIndicator/RoleIndicator'
 import Dashboard from './pages/Dashboard/Dashboard'
@@ -8,9 +8,41 @@ import ManageCategory from './pages/ManageCategory/ManageCategory'
 import ManageItems from './pages/ManageItems/ManageItems'
 import ManageUsers from './pages/ManageUsers/ManageUsers'
 import Login from './pages/Login/Login'
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import OrderHistory from './pages/OrderHistory/OrderHistory';
+import PaymentCallback from './pages/PaymentCallback/PaymentCallback';
 
+// Protected Route Component for Admin only
+const AdminRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
+  const isAdmin = role === 'ROLE_ADMIN' || role === 'ADMIN';
+
+  if (!token) {
+    toast.error('Please login to access this page');
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    toast.error('Access denied. Admin only.');
+    return <Navigate to="/explore" replace />;
+  }
+
+  return children;
+};
+
+// Protected Route Component for any logged-in user
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    toast.error('Please login to access this page');
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
 
 const App = () => {
   const location = useLocation();
@@ -63,13 +95,83 @@ const App = () => {
 )}
 
  <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/manage-category" element={<ManageCategory />} />
-        <Route path="/manage-items" element={<ManageItems />} />
-        <Route path="/manage-users" element={<ManageUsers />} />
-        <Route path="/" element={<Dashboard />} />
+        {/* Public route */}
         <Route path="/login" element={<Login />} />
+        
+        {/* Admin only routes */}
+        <Route 
+          path="/dashboard" 
+          element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          } 
+        />
+        <Route 
+          path="/manage-category" 
+          element={
+            <AdminRoute>
+              <ManageCategory />
+            </AdminRoute>
+          } 
+        />
+        <Route 
+          path="/manage-items" 
+          element={
+            <AdminRoute>
+              <ManageItems />
+            </AdminRoute>
+          } 
+        />
+        <Route 
+          path="/manage-users" 
+          element={
+            <AdminRoute>
+              <ManageUsers />
+            </AdminRoute>
+          } 
+        />
+        <Route 
+          path="/orders" 
+          element={
+            <AdminRoute>
+              <OrderHistory />
+            </AdminRoute>
+          } 
+        />
+        
+        {/* Public route - Explore is accessible to everyone */}
+        <Route 
+          path="/explore" 
+          element={<Explore />} 
+        />
+
+        {/* Khalti return callback */}
+        <Route path="/payment/callback" element={<PaymentCallback />} />
+        
+        {/* Default route - redirect based on login status and role */}
+        <Route 
+          path="/" 
+          element={
+            (() => {
+              const token = localStorage.getItem('token');
+              const role = localStorage.getItem('role');
+              
+              // If not logged in, redirect to explore (public page)
+              if (!token) {
+                return <Navigate to="/explore" replace />;
+              }
+              
+              // If logged in as admin, redirect to dashboard
+              if (role === 'ROLE_ADMIN' || role === 'ADMIN') {
+                return <Navigate to="/dashboard" replace />;
+              }
+              
+              // If logged in as regular user, redirect to explore
+              return <Navigate to="/explore" replace />;
+            })()
+          } 
+        />
       </Routes>
     </div>
   )

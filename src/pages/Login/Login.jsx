@@ -41,13 +41,35 @@ const Login = () => {
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
         
-        toast.success(`Login Successful! Role: ${role}`);
-        navigate("/dashboard");
+        const isAdmin = role === 'ROLE_ADMIN' || role === 'ADMIN';
+        toast.success(`Login Successful! Welcome ${isAdmin ? 'Admin' : 'User'}`);
+        
+        // Redirect based on role
+        if (isAdmin) {
+          navigate("/dashboard");
+        } else {
+          navigate("/explore");
+        }
+        
         setData({ email: "", password: "" });
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error(error?.response?.data?.message || "Email/Password Invalid");
+      
+      // Handle different error scenarios
+      if (error?.response?.status === 403) {
+        toast.error("Access forbidden. Please check your credentials and try again.");
+      } else if (error?.response?.status === 401) {
+        toast.error("Invalid email or password");
+      } else if (error?.response?.status === 500) {
+        toast.error("Server error. Please try again later.");
+      } else if (error?.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else if (error?.message === "Network Error") {
+        toast.error("Cannot connect to server. Please check if the backend is running.");
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import './SearchBox.css'
 
 const SearchBox = ({ onSearch }) => {
   const [searchText, setSearchText] = useState('');
@@ -9,14 +10,14 @@ const SearchBox = ({ onSearch }) => {
   }
 
   return (
-    <div className='input-group mb-3'>
+    <div className='search-box-wrapper'>
       <input 
-        className='form-control' 
-        placeholder='Search Items......' 
+        className='search-input' 
+        placeholder='Search items...' 
         value={searchText} 
         onChange={handleInputChange} 
       />
-      <span className='input-group-text bg-warning'>
+      <span className='search-icon'>
         <i className='bi bi-search'></i>
       </span>
     </div>

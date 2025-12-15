@@ -1,29 +1,87 @@
-.category-container {
+.manage-users-container {
     display: flex;
     gap: 20px;
     padding: 20px;
     height: calc(100vh - 5rem);
     box-sizing: border-box;
-    background-color: #2C3335;
+    background-color: #1a1e1f;
+    color: #f8f9fa;
 }
 
-.left-colum{
-    flex:0.7;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 16px;
+.left-column {
+    flex: 0.4;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    padding: 20px;
     height: 100%;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    background: linear-gradient(145deg, #2a2f31, #24292b);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
 }
-.right-colum{
-    flex:0.3;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 8px;
+
+.right-column {
+    flex: 0.6;
+    border: 1px solid #2d3748;
+    border-radius: 12px;
+    padding: 20px;
     height: 100%;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    background: linear-gradient(145deg, #2a2f31, #24292b);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .manage-users-container {
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - 5rem);
+    }
+    
+    .left-column, .right-column {
+        flex: none;
+        height: auto;
+        min-height: 500px;
+        max-height: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .manage-users-container {
+        padding: 12px;
+        gap: 15px;
+    }
+    
+    .left-column, .right-column {
+        padding: 16px;
+    }
+}
+
+/* Custom scrollbar */
+.left-column::-webkit-scrollbar,
+.right-column::-webkit-scrollbar {
+    width: 6px;
+}
+
+.left-column::-webkit-scrollbar-track,
+.right-column::-webkit-scrollbar-track {
+    background: #2a2f31;
+    border-radius: 3px;
+}
+
+.left-column::-webkit-scrollbar-thumb,
+.right-column::-webkit-scrollbar-thumb {
+    background: #4a5568;
+    border-radius: 3px;
+}
+
+.left-column::-webkit-scrollbar-thumb:hover,
+.right-column::-webkit-scrollbar-thumb:hover {
+    background: #5d6b83;
 }

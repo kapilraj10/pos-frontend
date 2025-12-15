@@ -8,25 +8,18 @@ const getAuthHeaders = () => {
 };
 
 // Add item
-// export const addItem = async (formData) => {
-//   return await axios.post(`${BASE_URL}/admin/items`, formData, {
-//     headers: getAuthHeaders(),
-//   });
-// };
-
 export const addItem = async (formData) => {
   const token = localStorage.getItem("token");
   console.log("Token being sent:", token);
   console.log("Role:", localStorage.getItem("role"));
-  
-  return await axios.post("http://localhost:8080/api/v1/pos/admin/items", formData, {
-    headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data'
+
+  return await axios.post(`${BASE_URL}/admin/items`, formData, {
+    headers: {
+      ...getAuthHeaders(),
+      "Content-Type": "multipart/form-data",
     },
   });
 };
-      
 
 // Delete item
 export const deleteItem = async (itemId) => {

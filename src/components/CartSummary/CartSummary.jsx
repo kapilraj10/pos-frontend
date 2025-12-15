@@ -41,9 +41,64 @@ const CartSummary = ({
       return;
     }
 
-    // Check if Khalti payment
+    // If Khalti payment selected, start remote checkout flow
     if (paymentMode.toLowerCase() === 'khalti') {
-      toast.info("Khalti payment gateway under development");
+      // Prepare minimal order payload and call backend initiate endpoint
+      setProcessing(true);
+      try {
+        const orderPreview = {
+          customerName,
+          phoneNumber: customerMobile,
+          subTotal: parseFloat(totalAmount.toFixed(2)),
+          tax: parseFloat(tax.toFixed(2)),
+          grandTotal: parseFloat(grandTotal.toFixed(2)),
+          paymentMethod: 'KHALTI',
+          cartItems: cartItems.map((item) => ({ 
+            name: item.name, 
+            quantity: item.quantity, 
+            price: item.price 
+          }))
+        };
+
+        // Store order details in localStorage for callback page
+        localStorage.setItem("khalti_order", JSON.stringify({
+          customerName,
+          phoneNumber: customerMobile,
+          subTotal: parseFloat(totalAmount.toFixed(2)),
+          tax: parseFloat(tax.toFixed(2)),
+          grandTotal: parseFloat(grandTotal.toFixed(2)),
+          items: cartItems.map((item) => ({ 
+            name: item.name, 
+            quantity: item.quantity, 
+            price: item.price 
+          }))
+        }));
+
+        const { initiateKhaltiPayment } = await import("../../Service/PaymentService.js");
+        const returnUrl = `${window.location.origin}/payment/callback`;
+        const resp = await initiateKhaltiPayment(orderPreview, returnUrl);
+
+        // Expect resp.khalti.payment_url to redirect the user
+        const khaltiObj = resp && resp.khalti ? resp.khalti : null;
+        const finalUrl = (khaltiObj && (khaltiObj.payment_url || khaltiObj.paymentUrl)) || resp?.payment_url || resp?.paymentUrl || null;
+
+        if (finalUrl) {
+          // Clear cart before redirect
+          clearCart();
+          clearAll();
+          
+          // redirect to Khalti checkout
+          window.location.href = finalUrl;
+          return;
+        }
+
+        toast.error("Unable to start Khalti checkout. Please try again.");
+      } catch (err) {
+        console.error("Khalti start error:", err);
+        toast.error("Failed to initiate Khalti payment. Please try again.");
+      } finally {
+        setProcessing(false);
+      }
       return;
     }
 
@@ -128,10 +183,8 @@ const CartSummary = ({
         
         toast.success("Order placed successfully!");
         
-        // Auto print after a short delay
-        setTimeout(() => {
-          window.print();
-        }, 500);
+        // Keep showing the receipt popup - don't auto print
+        // User can click Print button if needed
       } else {
         toast.error("Failed to place order. Please try again.");
         console.error("Unexpected response:", response);
@@ -150,26 +203,37 @@ const CartSummary = ({
     window.print();
   };
 
+  
+
   return (
     <div className="cart-summary p-3 bg-dark rounded">
       <h5 className="text-light mb-3">Cart Summary</h5>
 
-      <div className="d-flex justify-content-between mb-2">
-        <span className="text-light">Subtotal:</span>
-        <span className="text-light">रु {totalAmount.toFixed(2)}</span>
-      </div>
+      {cartItems.length === 0 ? (
+        <div className="text-center text-secondary mb-3">
+          <i className="bi bi-cart3 d-block mb-2" style={{ fontSize: '2rem' }}></i>
+          <span>Your cart is empty</span>
+        </div>
+      ) : (
+        <>
+          <div className="d-flex justify-content-between mb-2">
+            <span className="text-light">Subtotal:</span>
+            <span className="text-light">रु{totalAmount.toFixed(2)}</span>
+          </div>
 
-      <div className="d-flex justify-content-between mb-2">
-        <span className="text-light">Tax (13%):</span>
-        <span className="text-light">रु {tax.toFixed(2)}</span>
-      </div>
+          <div className="d-flex justify-content-between mb-2">
+            <span className="text-light">Tax (13%):</span>
+            <span className="text-light">रु{tax.toFixed(2)}</span>
+          </div>
 
-      <hr className="border-secondary" />
+          <hr className="border-secondary" />
 
-      <div className="d-flex justify-content-between mb-3">
-        <strong className="text-light">Total:</strong>
-        <strong className="text-light">रु {grandTotal.toFixed(2)}</strong>
-      </div>
+          <div className="d-flex justify-content-between mb-3">
+            <strong className="text-light">Total:</strong>
+            <strong className="text-success">रु{grandTotal.toFixed(2)}</strong>
+          </div>
+        </>
+      )}
 
       <div className="d-flex gap-3">
         <button
@@ -178,7 +242,7 @@ const CartSummary = ({
           onClick={() => completePayment("cash")}
           disabled={isProcessing || cartItems.length === 0}
         >
-          {isProcessing ? "Processing..." : "💵 Cash Payment"}
+          {isProcessing ? "Processing..." : " Cash "}
         </button>
 
         <button
@@ -187,7 +251,7 @@ const CartSummary = ({
           onClick={() => completePayment("khalti")}
           disabled={isProcessing || cartItems.length === 0}
         >
-          {isProcessing ? "Processing..." : "💳 Khalti Payment"}
+          {isProcessing ? "Processing..." : "Khalti"}
         </button>
       </div>
 

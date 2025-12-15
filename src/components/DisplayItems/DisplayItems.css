@@ -1,0 +1,292 @@
+/* ============================================
+   ITEMS CONTAINER
+   ============================================ */
+
+.items-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+  overflow: hidden;
+}
+
+/* Items Header */
+.items-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex: 0 0 auto;
+}
+
+.items-count {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.items-count::before {
+  content: '';
+  width: 3px;
+  height: 16px;
+  background: linear-gradient(180deg, #667eea, #764ba2);
+  border-radius: 2px;
+}
+
+/* Search Box Container */
+.items-search-container {
+  margin-bottom: 14px;
+  flex: 0 0 auto;
+}
+
+/* Items Grid Layout - 3x3 = 9 items */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Individual Item Wrapper */
+.item-card-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Pagination Container */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Pagination Buttons */
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.5);
+  border-color: #667eea;
+  transform: scale(1.05);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Pagination Numbers */
+.pagination-numbers {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.pagination-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pagination-number:hover {
+  background: rgba(102, 126, 234, 0.3);
+  border-color: #667eea;
+  transform: translateY(-2px);
+}
+
+.pagination-number.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+  transform: scale(1.1);
+}
+
+.pagination-ellipsis {
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0 4px;
+  font-size: 14px;
+  user-select: none;
+}
+
+/* Loading State */
+.items-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+}
+
+.loading-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+/* Error State */
+.items-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+  font-size: 14px;
+}
+
+.items-error i {
+  font-size: 18px;
+}
+
+/* Empty State */
+.items-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.items-empty i {
+  font-size: 48px;
+  opacity: 0.5;
+}
+
+.items-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* Large Tablet / Small Desktop */
+@media (max-width: 1200px) {
+  .items-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Tablet: 2x2 Grid (4 items) */
+@media (max-width: 991px) {
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .items-container {
+    padding: 14px;
+  }
+
+  .items-count {
+    font-size: 14px;
+  }
+}
+
+/* Mobile: 2 columns */
+@media (max-width: 767px) {
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .items-container {
+    padding: 12px;
+  }
+  
+  .items-header {
+    margin-bottom: 10px;
+  }
+
+  .items-search-container {
+    margin-bottom: 12px;
+  }
+  
+  .pagination-container {
+    gap: 6px;
+    padding: 10px 0;
+  }
+  
+  .pagination-btn,
+  .pagination-number {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    font-size: 11px;
+  }
+  
+  .pagination-numbers {
+    gap: 4px;
+  }
+}
+
+/* Small mobile - single column */
+@media (max-width: 400px) {
+  .items-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 10px;
+  }
+
+  .item-card-wrapper {
+    height: 160px;
+  }
+
+  .pagination-number {
+    padding: 0 6px;
+    min-width: 26px;
+  }
+
+  .pagination-btn {
+    width: 26px;
+    min-width: 26px;
+  }
+}

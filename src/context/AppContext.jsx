@@ -65,7 +65,8 @@ const updateQuantity = (itemId, newQuantity) => {
   const normalizeItem = (raw) => {
     let imgUrl = raw?.imgUrl ?? raw?.imageUrl ?? raw?.image ?? null;
     if (imgUrl && !imgUrl.startsWith("http://") && !imgUrl.startsWith("https://")) {
-      imgUrl = `http://localhost:8080/uploads/${imgUrl}`;
+      // Respect backend context path for static uploads
+      imgUrl = `http://localhost:8080/api/v1/pos/uploads/${imgUrl}`;
     }
     return {
       id: raw?.id ?? raw?.itemId ?? raw?._id ?? null,

@@ -1,15 +1,18 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-// Get token helper
-const getAuthHeader = () => ({
-    Authorization: `Bearer ${localStorage.getItem('token')}`
-});
+const BASE_URL = 'http://localhost:8080/api/v1/pos';
+
+// Get token helper (only include header if token exists)
+const getAuthHeader = () => {
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 // Fetch latest orders
 export const latestOrders = async () => {
     try {
-        const response = await axios.get('http://localhost:8080/api/v1/pos/orders/latest', {
+    const response = await axios.get(`${BASE_URL}/orders/latest`, {
             headers: getAuthHeader()
         });
         return response.data;
@@ -27,7 +30,7 @@ export const createOrder = async (order) => {
     }
 
     try {
-        const response = await axios.post('http://localhost:8080/api/v1/pos/orders', order, {
+    const response = await axios.post(`${BASE_URL}/orders`, order, {
             headers: {
                 ...getAuthHeader(),
                 'Content-Type': 'application/json'
@@ -45,7 +48,7 @@ export const createOrder = async (order) => {
 // Delete order
 export const deleteOrder = async (orderId) => {
     try {
-        const response = await axios.delete(`http://localhost:8080/api/v1/pos/orders/${orderId}`, {
+    const response = await axios.delete(`${BASE_URL}/orders/${orderId}`, {
             headers: getAuthHeader()
         });
         toast.success("Order deleted successfully!");

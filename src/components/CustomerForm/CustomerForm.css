@@ -1,0 +1,72 @@
+/* Customer Form Styles */
+.customer-form-container {
+  padding: 0;
+}
+
+.customer-form-container h3 {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.customer-form-row {
+  margin-bottom: 14px;
+}
+
+.customer-form-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.customer-form-input-container {
+  position: relative;
+}
+
+.customer-form-input {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.customer-form-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.customer-form-input:focus {
+  outline: none;
+  border-color: #667eea;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.customer-form-input:invalid:not(:placeholder-shown) {
+  border-color: #ef4444;
+}
+
+.customer-form-hint {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .customer-form-container h3 {
+    font-size: 15px;
+  }
+  
+  .customer-form-input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}

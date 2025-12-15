@@ -1,64 +1,142 @@
-/* Layout container and page background */
+/* ============================================
+   EXPLORE PAGE - Main Layout
+   ============================================ */
+
 .explore-container {
-  padding: 20px;
-  height: calc(100vh - 5rem);
-  background-color: #2c3335;
+  padding: 16px;
+  height: calc(100vh - 60px);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  overflow: hidden;
 }
 
 .explore-container .row {
   height: 100%;
+  margin: 0;
 }
 
-/* Left column */
+/* ============================================
+   LEFT COLUMN - Categories + Items
+   ============================================ */
+
 .left-column {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* Rows inside left column */
+/* Category Row - Fixed at top */
 .first-row {
-  flex: 0.3;
-  min-height: 0;
-  overflow: auto;
+  flex: 0 0 auto;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .horizontal-line {
-  margin: 20px 0;
-  border: 0;
-  border-top: 1px solid #cccccc;
+  display: none;
 }
 
+/* Items Row - Fills remaining space */
 .second-row {
-  flex: 0.7;
+  flex: 1;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Right column acts as a vertical flex container */
+/* ============================================
+   RIGHT COLUMN - Cart Panel
+   ============================================ */
+
 .right-column {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
-/* Summary section pinned to the bottom portion */
+/* Customer form section */
+.right-column > .p-3.border-bottom {
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Cart items section - scrollable */
+.right-column > .flex-grow-1 {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for cart */
+.right-column > .flex-grow-1::-webkit-scrollbar {
+  width: 6px;
+}
+
+.right-column > .flex-grow-1::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.right-column > .flex-grow-1::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.4);
+  border-radius: 3px;
+}
+
+/* Cart Summary - Fixed at bottom */
 .cart-summary-container {
-  flex: 0.3;
-  border-top: 1px solid #ccc;
+  flex: 0 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-/* Shared card-like item */
-.cart-item {
-  background-color: #2c2c2c;
-  padding: 12px;
-  border-radius: 8px;
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 991px) {
+  .explore-container {
+    height: auto;
+    min-height: calc(100vh - 60px);
+    padding: 12px;
+  }
+  
+  .explore-container .row {
+    height: auto;
+  }
+  
+  .left-column {
+    height: auto;
+    min-height: 500px;
+    margin-bottom: 16px;
+  }
+  
+  .right-column {
+    height: auto;
+    min-height: 400px;
+  }
+  
+  .second-row {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 576px) {
+  .explore-container {
+    padding: 8px;
+  }
+  
+  .first-row {
+    padding: 12px;
+  }
 }

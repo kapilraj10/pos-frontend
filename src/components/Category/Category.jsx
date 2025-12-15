@@ -1,25 +1,45 @@
-import React from 'react'
-import './Category.css'
+import React from "react";
+import "./Category.css";
 
-const Category = ({ categoryName, imgUrl, numberOfItems, bgColor,isSelected, onClick }) => {
-  return (
-    <div 
-      className='d-flex align-items-center p-3 rounded gap-1 position-relative category-card category-hover'
-      style={{ backgroundColor: bgColor, cursor: "pointer" }}
-      onClick={onClick}
-    >
-      <div style={{ position: "relative", marginRight: "15px" }}>
-        <img src={imgUrl} alt={categoryName} className='category-image' />
-      </div>
-      <div>
-        <h6 className='text-white mb-0'>{categoryName}</h6>
-        <p className='text-white-50 mb-0'>
-          {numberOfItems} {numberOfItems === 1 ? 'item' : 'items'}
-        </p>
-      </div>
-      {isSelected && <div className='active-category'></div>}
-    </div>
-  )
-}
 
-export default Category
+const Category = ({
+categoryName,
+imgUrl,
+numberOfItems,
+bgColor,
+isSelected,
+onClick,
+}) => {
+return (
+<div
+className={`category-card ${isSelected ? "category-selected" : ""}`}
+style={{ backgroundColor: bgColor }}
+onClick={onClick}
+title={categoryName}
+>
+<div className="category-icon-wrapper">
+<img
+src={imgUrl}
+alt={categoryName}
+className="category-icon"
+/>
+</div>
+
+
+<div className="category-info">
+<h6 className="category-name">{categoryName}</h6>
+<span className="category-count">
+{numberOfItems} {numberOfItems === 1 ? "item" : "items"}
+</span>
+</div>
+
+
+{isSelected && (
+<div className="category-selected-badge">✓</div>
+)}
+</div>
+);
+};
+
+
+export default Category;

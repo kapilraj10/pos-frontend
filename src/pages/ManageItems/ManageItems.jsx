@@ -5,11 +5,11 @@ import ItemsList from '../../components/ItemsList/ItemsList'
 
 const ManageItems = () => {
   return (
-    <div className='category-container text-light'>
-      <div className='left-colum'>
+    <div className='manage-items-container'>
+      <div className='left-column'>
         <ItemsForm />
       </div>
-      <div className='right-colum'>
+      <div className='right-column'>
         <ItemsList />
       </div>
     </div>

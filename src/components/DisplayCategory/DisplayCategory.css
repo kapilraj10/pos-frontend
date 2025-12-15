@@ -1,0 +1,66 @@
+/* ============================================
+   CATEGORY CONTAINER - Horizontal Scroll
+   ============================================ */
+
+.category-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.category-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep functionality */
+.category-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.category-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.category-scroll::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.4);
+  border-radius: 2px;
+}
+
+.category-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.6);
+}
+
+/* Each category item wrapper */
+.category-item {
+  flex: 0 0 auto;
+  width: 110px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 991px) {
+  .category-item {
+    width: 100px;
+  }
+  
+  .category-scroll {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .category-item {
+    width: 90px;
+  }
+  
+  .category-scroll {
+    gap: 8px;
+  }
+}
