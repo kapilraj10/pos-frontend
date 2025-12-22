@@ -8,10 +8,10 @@ const DisplayItems = ({ selectedCategory }) => {
   const { items, loading, error } = useContext(AppContext);
   const [searchText, setSearchText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Responsive items per page
   const [itemsPerPage, setItemsPerPage] = useState(9);
-  
+
   useEffect(() => {
     const updateItemsPerPage = () => {
       const width = window.innerWidth;
@@ -23,7 +23,7 @@ const DisplayItems = ({ selectedCategory }) => {
         setItemsPerPage(9); // Desktop: 9 items per page (3×3)
       }
     };
-    
+
     updateItemsPerPage();
     window.addEventListener('resize', updateItemsPerPage);
     return () => window.removeEventListener('resize', updateItemsPerPage);
@@ -38,7 +38,7 @@ const DisplayItems = ({ selectedCategory }) => {
     if (selectedCategory && String(item.categoryId) !== String(selectedCategory)) {
       return false;
     }
-    
+
     if (searchText && !item.name.toLowerCase().includes(searchText.toLowerCase())) {
       return false;
     }
@@ -63,8 +63,8 @@ const DisplayItems = ({ selectedCategory }) => {
   // Generate page numbers to display - Show all pages if <= 10, otherwise use smart ellipsis
   const getPageNumbers = () => {
     const pageNumbers = [];
-    const maxVisibleButtons = 10;
-    
+    const maxVisibleButtons = 8;
+
     // If total pages is small enough, show all
     if (totalPages <= maxVisibleButtons) {
       for (let i = 1; i <= totalPages; i++) {
@@ -94,7 +94,7 @@ const DisplayItems = ({ selectedCategory }) => {
         pageNumbers.push(totalPages);
       }
     }
-    
+
     return pageNumbers;
   };
 
@@ -148,6 +148,7 @@ const DisplayItems = ({ selectedCategory }) => {
               itemImage={item.imgUrl}
               itemPrice={item.price}
               itemId={item.id}
+              stock={item.stock}
             />
           </div>
         ))}
@@ -156,14 +157,14 @@ const DisplayItems = ({ selectedCategory }) => {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className='pagination-container'>
-          <button 
+          <button
             className='pagination-btn pagination-prev'
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
             <i className="bi bi-chevron-left"></i>
           </button>
-          
+
           <div className='pagination-numbers'>
             {getPageNumbers().map((pageNum, index) => (
               pageNum === '...' ? (
@@ -180,7 +181,7 @@ const DisplayItems = ({ selectedCategory }) => {
             ))}
           </div>
 
-          <button 
+          <button
             className='pagination-btn pagination-next'
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}

@@ -15,7 +15,8 @@ const ItemsForm = () => {
     name: "",
     category: "",
     price: "",
-    description: ""
+    description: "",
+    stock: 0
   });
 
   // Debug categories loading
@@ -53,6 +54,11 @@ const ItemsForm = () => {
       return;
     }
 
+    if (formData.stock == null || formData.stock < 0) {
+      toast.error("Please enter a valid stock (0 or more)");
+      return;
+    }
+
     setLoading(true);
     try {
       const itemData = {
@@ -60,7 +66,8 @@ const ItemsForm = () => {
         category: formData.category,
         price: formData.price,
         description: formData.description,
-        file: image
+        file: image,
+        stock: formData.stock
       };
 
       await addItem(itemData);
@@ -70,7 +77,8 @@ const ItemsForm = () => {
         name: "",
         category: "",
         price: "",
-        description: ""
+        description: "",
+        stock: 0
       });
       setImage(null);
       setImagePreview(assets.upload || "/placeholder.png");
@@ -193,6 +201,22 @@ const ItemsForm = () => {
               required
             />
           </div>
+        </div>
+
+        {/* Stock */}
+        <div className="form-group">
+          <label htmlFor="stock" className="form-label">Stock</label>
+          <input
+            type="number"
+            name="stock"
+            id="stock"
+            className="form-control-custom"
+            placeholder="0"
+            value={formData.stock}
+            onChange={handleChange}
+            min="0"
+            required
+          />
         </div>
 
         {/* Description */}

@@ -4,7 +4,7 @@ import { AppContext } from '../../context/AppContext'
 
 const CartItems = () => {
   const { cartItems, removeFromCart, updateQuantity } = useContext(AppContext);
-  
+
   return (
     <div className="p-3 h-100 overflow-y-auto">
       {cartItems.length === 0 ? (
@@ -15,7 +15,7 @@ const CartItems = () => {
         <div className='cart-items-list'>
           {cartItems.map((item, index) => (
             <div key={index} className='cart-items mb-3 p-3 bg-dark rounded'>
-              
+
               <div className='d-flex justify-content-between align-items-center mb-2'>
                 <h6 className='mb-0 text-light'>{item.name}</h6>
                 <p className='mb-0 text-light'>
@@ -26,7 +26,7 @@ const CartItems = () => {
               <div className='d-flex justify-content-between align-items-center'>
 
                 <div className='d-flex align-items-center gap-2'>
-                  <button 
+                  <button
                     className='btn btn-danger btn-sm'
                     disabled={item.quantity === 1}
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -37,7 +37,12 @@ const CartItems = () => {
                   <span className='text-light'>{item.quantity}</span>
 
                   <button className='btn btn-success btn-sm'
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    disabled={item.stock != null && (item.stock <= 5 || item.quantity >= (item.stock || 0))}
+                    onClick={() => {
+                      // prevent increasing beyond available stock or when stock is low (<=5 -> only 1 allowed)
+                      if (item.stock != null && (item.stock <= 5 || item.quantity >= (item.stock || 0))) return;
+                      updateQuantity(item.id, item.quantity + 1);
+                    }}
                   >
                     <i className='bi bi-plus'></i>
                   </button>

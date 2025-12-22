@@ -1,17 +1,21 @@
 import React, { useContext, useState } from 'react';
 import { AppContext } from '../../context/AppContext';
 
-const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = true, showCartControls = false }) => {
-  const { addToCart, removeFromCart, cart } = useContext(AppContext);
-  
+const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, stock = 0, dark = true, showCartControls = false }) => {
+  const { addToCart, removeFromCart, cartItems } = useContext(AppContext);
+
   // Check if item is in cart
-  const itemInCart = cart?.find(cartItem => String(cartItem.id) === String(itemId));
+  const itemInCart = cartItems?.find(cartItem => String(cartItem.id) === String(itemId));
   const quantityInCart = itemInCart ? itemInCart.quantity : 0;
-  
+
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
-  
+
   const handleAddToCart = () => {
+    // Allow add when stock > 0. If low stock (1..5) we still allow a single-unit add;
+    // the AppContext will enforce per-user caps and backend will validate.
+    const isOutOfStock = stock != null && stock <= 0;
+    if (isOutOfStock) return;
     addToCart({
       name: itemName,
       imgUrl: itemImage,
@@ -49,7 +53,7 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
       background: dark ? '#111827' : '#ffffff',
       borderRadius: '14px',
       border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-      boxShadow: isHovered 
+      boxShadow: isHovered
         ? '0 8px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06)'
         : '0 3px 10px rgba(0,0,0,0.05)',
       overflow: 'hidden',
@@ -83,7 +87,7 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
       left: 0,
       right: 0,
       height: '40%',
-      background: dark 
+      background: dark
         ? 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%)'
         : 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 100%)',
       pointerEvents: 'none',
@@ -286,32 +290,37 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
                 onMouseLeave={() => setMinusHovered(false)}
               >
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
                 </svg>
               </button>
-              
+
               <span style={styles.quantityDisplay}>
                 {quantityInCart}
               </span>
-              
+
               <button
                 style={{
                   ...styles.quantityBtn,
                   ...(plusHovered ? styles.quantityBtnHover : {})
                 }}
-                onClick={handleAddToCart}
+                onClick={() => {
+                  // Prevent adding if out of stock or if cart already has all available stock
+                  if (stock != null && stock <= 0) return;
+                  if (stock != null && quantityInCart >= stock) return;
+                  handleAddToCart();
+                }}
                 onMouseEnter={() => setPlusHovered(true)}
                 onMouseLeave={() => setPlusHovered(false)}
               >
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                 </svg>
               </button>
             </div>
           </div>
 
           <div style={styles.price}>
-           रु{itemPrice * quantityInCart}
+            रु{itemPrice * quantityInCart}
             <span style={{ fontSize: '12px', opacity: 0.7, marginLeft: '4px' }}>
               (₹{itemPrice} × {quantityInCart})
             </span>
@@ -336,8 +345,8 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
                 style={styles.buttonIcon}
                 viewBox="0 0 16 16"
               >
-                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
               </svg>
               Remove
             </button>
@@ -358,12 +367,17 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
   }
 
   // Regular Item View (Product Card)
+  const isOutOfStock = stock != null && stock <= 0;
+  const isLowStock = stock != null && stock <= 5 && stock > 0;
+
   return (
     <div
       style={styles.card}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={handleAddToCart}
+      onClick={() => {
+        if (!isOutOfStock) handleAddToCart();
+      }}
     >
       <div style={styles.imageContainer}>
         <div style={styles.overlay} />
@@ -376,13 +390,24 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
             e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzFmMjkzNyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRtbGUiIGR5PSIuM2VtIj5JdGVtIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
           }}
         />
-        
+
         {quantityInCart > 0 && (
           <div style={styles.quantityBadge}>
             <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+              <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
             </svg>
             {quantityInCart}
+          </div>
+        )}
+        {/* Stock indicators */}
+        {isOutOfStock && (
+          <div style={{ position: 'absolute', top: 10, left: 10, background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: 6, fontSize: 12, zIndex: 3 }}>
+            Out of stock
+          </div>
+        )}
+        {isLowStock && (
+          <div style={{ position: 'absolute', top: 10, left: 10, background: '#f59e0b', color: 'white', padding: '4px 8px', borderRadius: 6, fontSize: 12, zIndex: 3 }}>
+            Low stock
           </div>
         )}
       </div>
@@ -391,9 +416,9 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
         <h6 style={styles.title} title={itemName}>
           {itemName}
         </h6>
-        
+
         <div style={styles.price}>
-         रु{itemPrice}
+          रु{itemPrice}
         </div>
 
         {paymentTypes && Array.isArray(paymentTypes) && paymentTypes.length > 0 && (
@@ -411,14 +436,20 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
 
         <div style={styles.actionButtons}>
           <button
-            style={styles.addButton}
+            style={{
+              ...styles.addButton,
+              ...(isOutOfStock ? { opacity: 0.6, cursor: 'not-allowed' } : {})
+            }}
             onMouseDown={() => setIsPressed(true)}
             onMouseUp={() => setIsPressed(false)}
             onMouseLeave={() => setIsPressed(false)}
             onClick={(e) => {
               e.stopPropagation();
+              if (isOutOfStock) return;
               handleAddToCart();
             }}
+            aria-disabled={isOutOfStock}
+            disabled={isOutOfStock}
           >
             <svg
               width="12"
@@ -427,9 +458,9 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, dark = tru
               style={styles.buttonIcon}
               viewBox="0 0 16 16"
             >
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
             </svg>
-            {quantityInCart > 0 ? 'Add More' : 'Add to Cart'}
+            {isOutOfStock ? 'Out of stock' : (isLowStock ? 'Low stock' : (quantityInCart > 0 ? 'Add More' : 'Add to Cart'))}
           </button>
         </div>
       </div>

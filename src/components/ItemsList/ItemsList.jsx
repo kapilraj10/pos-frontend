@@ -3,10 +3,13 @@ import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
 
 const ItemsList = () => {
-  const { items = [], categories = [], deleteItemById } = useContext(AppContext);
+  const { items = [], categories = [], deleteItemById, updateItem } = useContext(AppContext);
   const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [editing, setEditing] = useState(false);
 
   const getCategoryName = (id) =>
     categories.find(c => String(c.id) === String(id))?.name || "Unknown";
@@ -34,6 +37,34 @@ const ItemsList = () => {
     } finally {
       setDeleting(false);
     }
+  };
+
+  const handleEditSave = async () => {
+    if (!editForm || !editItem) return;
+    setEditing(true);
+    try {
+      await updateItem({
+        id: editForm.id,
+        name: editForm.name,
+        price: editForm.price,
+        description: editForm.description,
+        category: editForm.category,
+        stock: editForm.stock,
+        file: editForm.file,
+      });
+      setEditItem(null);
+      setEditForm(null);
+      toast.success("Item updated");
+    } catch {
+      toast.error("Failed to update item");
+    } finally {
+      setEditing(false);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditItem(null);
+    setEditForm(null);
   };
 
   return (
@@ -134,6 +165,7 @@ const ItemsList = () => {
                   <tr>
                     <th className="ps-4">Item</th>
                     <th>Category</th>
+                    <th>Stock</th>
                     <th>Price</th>
                     <th className="d-none d-md-table-cell">Description</th>
                     <th className="text-end pe-4">Action</th>
@@ -198,6 +230,10 @@ const ItemsList = () => {
                         </td>
 
                         <td>
+                          <span className="badge bg-secondary me-2">{item.stock ?? 0}</span>
+                        </td>
+
+                        <td>
                           <span className="fw-bold text-success">
                             रु {Number(item.price).toFixed(2)}
                           </span>
@@ -212,13 +248,35 @@ const ItemsList = () => {
                         </td>
 
                         <td className="text-end pe-4">
-                          <button
-                            className="btn btn-sm btn-outline-dark"
-                            onClick={() => setSelectedItem(item)}
-                          >
-                            <i className="bi bi-trash me-1"></i>
-                            <span className="d-none d-md-inline">Delete</span>
-                          </button>
+                          <div className="d-flex justify-content-end gap-2">
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() => {
+                                setEditForm({
+                                  id: item.id,
+                                  name: item.name || "",
+                                  price: item.price || 0,
+                                  description: item.description || "",
+                                  category: item.categoryId || item.category || "",
+                                  stock: item.stock ?? 0,
+                                  file: null,
+                                });
+                                setSelectedItem(null);
+                                setEditItem(item);
+                              }}
+                            >
+                              <i className="bi bi-pencil me-1"></i>
+                              <span className="d-none d-md-inline">Edit</span>
+                            </button>
+
+                            <button
+                              className="btn btn-sm btn-outline-dark"
+                              onClick={() => setSelectedItem(item)}
+                            >
+                              <i className="bi bi-trash me-1"></i>
+                              <span className="d-none d-md-inline">Delete</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -337,6 +395,59 @@ const ItemsList = () => {
                       'Delete Item'
                     )}
                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Item Modal */}
+        {editForm && (
+          <div
+            className="modal fade show d-block"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(2px)' }}
+            tabIndex="-1"
+          >
+            <div className="modal-dialog modal-dialog-centered modal-lg">
+              <div className="modal-content border-0 shadow-lg">
+                <div className="modal-header">
+                  <h5 className="modal-title">Edit Item</h5>
+                  <button type="button" className="btn-close" onClick={handleEditCancel}></button>
+                </div>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label">Name</label>
+                    <input className="form-control" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Price</label>
+                    <input type="number" className="form-control" value={editForm.price} onChange={(e) => setEditForm({ ...editForm, price: e.target.value })} />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Stock</label>
+                    <input type="number" min={0} className="form-control" value={editForm.stock} onChange={(e) => setEditForm({ ...editForm, stock: e.target.value })} />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <textarea className="form-control" rows={3} value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}></textarea>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Category</label>
+                    <select className="form-select" value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}>
+                      <option value="">Select</option>
+                      {categories.map(cat => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Image (optional)</label>
+                    <input type="file" className="form-control" onChange={(e) => setEditForm({ ...editForm, file: e.target.files[0] })} />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button className="btn btn-outline-secondary" onClick={handleEditCancel} disabled={editing}>Cancel</button>
+                  <button className="btn btn-primary" onClick={handleEditSave} disabled={editing}>{editing ? 'Saving...' : 'Save changes'}</button>
                 </div>
               </div>
             </div>

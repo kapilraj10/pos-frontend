@@ -11,7 +11,7 @@ const CartSummary = ({
   customerMobile,
   setCustomerMobile,
 }) => {
-  const { cartItems, clearCart } = useContext(AppContext);
+  const { cartItems, clearCart, refreshItems } = useContext(AppContext);
 
   const totalAmount = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -53,10 +53,11 @@ const CartSummary = ({
           tax: parseFloat(tax.toFixed(2)),
           grandTotal: parseFloat(grandTotal.toFixed(2)),
           paymentMethod: 'KHALTI',
-          cartItems: cartItems.map((item) => ({ 
-            name: item.name, 
-            quantity: item.quantity, 
-            price: item.price 
+          cartItems: cartItems.map((item) => ({
+            itemId: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
           }))
         };
 
@@ -67,10 +68,11 @@ const CartSummary = ({
           subTotal: parseFloat(totalAmount.toFixed(2)),
           tax: parseFloat(tax.toFixed(2)),
           grandTotal: parseFloat(grandTotal.toFixed(2)),
-          items: cartItems.map((item) => ({ 
-            name: item.name, 
-            quantity: item.quantity, 
-            price: item.price 
+          items: cartItems.map((item) => ({
+            itemId: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
           }))
         }));
 
@@ -86,7 +88,7 @@ const CartSummary = ({
           // Clear cart before redirect
           clearCart();
           clearAll();
-          
+
           // redirect to Khalti checkout
           window.location.href = finalUrl;
           return;
@@ -106,7 +108,7 @@ const CartSummary = ({
 
     try {
       console.log("Cart Items at payment:", cartItems);
-      
+
       // Create order details for preview (NOT posting to backend yet)
       const orderPreview = {
         id: `preview-${Date.now()}`,
@@ -128,7 +130,7 @@ const CartSummary = ({
 
       // Set order details for preview
       setOrderDetails(orderPreview);
-      
+
       // Show receipt popup for review (Cash payment only)
       setShowPopup(true);
     } catch (err) {
@@ -157,6 +159,7 @@ const CartSummary = ({
         grandTotal: orderDetails.totalAmount,
         paymentMethod: orderDetails.paymentMode.toUpperCase(),
         cartItems: orderDetails.items.map((item) => ({
+          itemId: item.itemId || item.itemId,
           name: item.name,
           quantity: item.quantity,
           price: item.price,
@@ -176,13 +179,15 @@ const CartSummary = ({
         };
 
         setOrderDetails(completedOrder);
-        
+
         // Clear cart and customer info
         clearCart();
         clearAll();
-        
+        // Refresh items to reflect decremented stock after order
+        try { await refreshItems(); } catch (e) { console.error('Failed to refresh items after order', e); }
+
         toast.success("Order placed successfully!");
-        
+
         // Keep showing the receipt popup - don't auto print
         // User can click Print button if needed
       } else {
@@ -203,7 +208,7 @@ const CartSummary = ({
     window.print();
   };
 
-  
+
 
   return (
     <div className="cart-summary p-3 bg-dark rounded">
