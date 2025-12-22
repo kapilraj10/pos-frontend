@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
 import { assets } from "../../assets/assets";
+import './ItemsForm.css'
 
 const ItemsForm = () => {
   const { categories, addItem } = useContext(AppContext);
@@ -90,7 +91,7 @@ const ItemsForm = () => {
   return (
     <div className="items-form-container">
       <h4 className="form-title">Add New Item</h4>
-      
+
       <form onSubmit={handleSubmit} className="items-form">
         {/* Image Upload */}
         <div className="form-section">
@@ -210,9 +211,9 @@ const ItemsForm = () => {
         </div>
 
         {/* Submit Button */}
-        <button 
-          type="submit" 
-          className="submit-btn" 
+        <button
+          type="submit"
+          className="submit-btn"
           disabled={loading}
         >
           {loading ? (
@@ -224,227 +225,7 @@ const ItemsForm = () => {
         </button>
       </form>
 
-      <style>{`
-        .items-form-container {
-          background: #0a0a0a;
-          padding: 16px;
-          border-radius: 8px;
-          border: 1px solid #1f1f1f;
-        }
-        
-        .form-title {
-          color: #ffffff;
-          font-size: 16px;
-          font-weight: 600;
-          margin: 0 0 16px 0;
-          padding-bottom: 12px;
-          border-bottom: 1px solid #1f1f1f;
-        }
-        
-        .items-form {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-        }
-        
-        .form-section,
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        
-        .form-label {
-          color: #9ca3af;
-          font-size: 12px;
-          font-weight: 500;
-        }
-
-        .category-note {
-          font-size: 11px;
-          color: #6b7280;
-          font-weight: 400;
-        }
-        
-        .image-upload-container {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-        
-        .image-upload-label {
-          cursor: pointer;
-        }
-        
-        .image-preview {
-          width: 60px;
-          height: 60px;
-          border: 1px dashed #333;
-          border-radius: 6px;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .preview-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        
-        .upload-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.6);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          opacity: 0;
-          transition: opacity 0.2s;
-        }
-        
-        .image-upload-label:hover .upload-overlay {
-          opacity: 1;
-        }
-        
-        .upload-overlay i {
-          font-size: 16px;
-        }
-        
-        .upload-overlay span {
-          display: none;
-        }
-        
-        .image-input {
-          display: none;
-        }
-        
-        .file-info {
-          color: #6b7280;
-          font-size: 11px;
-          flex: 1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        
-        .form-control-custom {
-          background-color: #111111;
-          border: 1px solid #222;
-          border-radius: 6px;
-          color: #ffffff;
-          padding: 10px 12px;
-          font-size: 13px;
-          transition: all 0.2s;
-        }
-        
-        .form-control-custom:focus {
-          outline: none;
-          border-color: #667eea;
-          box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
-        }
-        
-        .form-control-custom::placeholder {
-          color: #4b5563;
-        }
-        
-        .form-select-custom {
-          background-color: #111111;
-          border: 1px solid #222;
-          border-radius: 6px;
-          color: #ffffff;
-          padding: 10px 12px;
-          font-size: 13px;
-          cursor: pointer;
-          transition: all 0.2s;
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-          background-repeat: no-repeat;
-          background-position: right 12px center;
-          background-size: 12px 10px;
-          padding-right: 36px;
-        }
-        
-        .form-select-custom:focus {
-          outline: none;
-          border-color: #667eea;
-          box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.15);
-        }
-
-        .form-select-custom:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        
-        .price-input-wrapper {
-          display: flex;
-          align-items: center;
-        }
-        
-        .currency-symbol {
-          background-color: #1a1a1a;
-          border: 1px solid #222;
-          border-right: none;
-          border-radius: 6px 0 0 6px;
-          color: #9ca3af;
-          padding: 10px 12px;
-          font-size: 13px;
-        }
-        
-        .price-input {
-          border-radius: 0 6px 6px 0 !important;
-          flex: 1;
-        }
-        
-        .textarea-custom {
-          resize: vertical;
-          min-height: 70px;
-          font-family: inherit;
-        }
-        
-        .submit-btn {
-          background-color: #667eea;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          padding: 10px;
-          font-size: 13px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s;
-          margin-top: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-        }
-        
-        .submit-btn:hover:not(:disabled) {
-          background-color: #5a6fd6;
-        }
-        
-        .submit-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        
-        .spinner {
-          width: 14px;
-          height: 14px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-radius: 50%;
-          border-top-color: white;
-          animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+      {/* styles moved to ItemsForm.css to avoid inline <style> and jsx attribute issues */}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const BASE_URL = 'https://pos-backend-3-4dt8.onrender.com/api/v1/pos';
+const BASE_URL = 'http://localhost:8080/api/v1/pos';
 
 // Get token helper (only include header if token exists)
 const getAuthHeader = () => {

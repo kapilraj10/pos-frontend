@@ -10,7 +10,7 @@ const getAuthHeaders = () => {
 export const addCategory = async (formData) => {
   try {
     // NEVER set Content-Type for FormData - axios adds boundary automatically
-  const res = await axios.post(`${BASE_URL}/admin/categories`, formData, {
+    const res = await axios.post(`${BASE_URL}/admin/categories`, formData, {
       headers: getAuthHeaders(),
     });
     return res;
