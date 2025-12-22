@@ -4,7 +4,7 @@
 
 .explore-container {
   padding: 16px;
-  height: calc(100vh - 60px);
+  height: auto;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
   overflow: hidden;
 }
