@@ -10,7 +10,7 @@ import ManageUsers from './pages/ManageUsers/ManageUsers'
 import Login from './pages/Login/Login'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import OrderHistory from './pages/OrderHistory/OrderHistory';
+// import OrderHistory from './pages/OrderHistory/OrderHistory';
 import PaymentCallback from './pages/PaymentCallback/PaymentCallback';
 
 // Protected Route Component for Admin only
@@ -128,14 +128,6 @@ const App = () => {
           element={
             <AdminRoute>
               <ManageUsers />
-            </AdminRoute>
-          } 
-        />
-        <Route 
-          path="/orders" 
-          element={
-            <AdminRoute>
-              <OrderHistory />
             </AdminRoute>
           } 
         />
