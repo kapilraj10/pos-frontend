@@ -1,0 +1,94 @@
+.userlist-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.users-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.users-header h5 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.users-header .subtitle {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.search-input-custom {
+    max-width: 320px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.search-input-custom input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #e6e6e6;
+}
+
+.avatar-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+}
+
+.user-cards {
+    display: none;
+    gap: 1rem;
+}
+
+.user-card {
+    border: 1px solid #efefef;
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user-card .left {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center
+}
+
+.user-card .meta {
+    color: #6b7280;
+    font-size: 0.9rem
+}
+
+/* Hide table on small screens and show cards */
+@media (max-width: 767px) {
+    .table-responsive {
+        display: none;
+    }
+
+    .user-cards {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Small spacing tweaks */
+.card .card-body {
+    padding: 0.6rem 0.8rem;
+}
+
+.action-btn {
+    min-width: 90px;
+}

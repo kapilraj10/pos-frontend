@@ -94,14 +94,7 @@ const Menubar = () => {
             </li>
           )}
 
-          {/* Order History - Only for ADMIN */}
-          {isAdmin && (
-            <li className="nav-item">
-              <Link className="nav-link" to="/orders">
-                Order History
-              </Link>
-            </li>
-          )}
+        
         </ul>
 
     {/* User profile dropdown or Login button */}
