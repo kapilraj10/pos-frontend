@@ -46,9 +46,11 @@
 /* Items Grid Layout - 3x3 = 9 items */
 .items-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* show 12 items on desktop: 4 columns x 3 rows */
+  grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 12px;
+  /* increased spacing between items as requested */
+  gap: 35px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -207,20 +209,22 @@
 /* Large Tablet / Small Desktop */
 @media (max-width: 1200px) {
   .items-grid {
-    grid-template-columns: repeat(3, 1fr);
+    /* keep 4x3 at slightly smaller widths */
+    grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 10px;
+    gap: 30px;
   }
 }
 
 /* Tablet: 2x2 Grid (4 items) */
 @media (max-width: 991px) {
   .items-grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 12px;
+    /* keep showing 12 items but reduce columns to 3 (3 columns x 4 rows = 12) */
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 20px;
   }
-  
+
   .items-container {
     padding: 14px;
   }
@@ -233,15 +237,16 @@
 /* Mobile: 2 columns */
 @media (max-width: 767px) {
   .items-grid {
+    /* mobile: 2 columns x 6 rows = 12 visible (if viewport allows) */
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-rows: repeat(6, 1fr);
+    gap: 16px;
   }
-  
+
   .items-container {
     padding: 12px;
   }
-  
+
   .items-header {
     margin-bottom: 10px;
   }
@@ -249,12 +254,12 @@
   .items-search-container {
     margin-bottom: 12px;
   }
-  
+
   .pagination-container {
     gap: 6px;
     padding: 10px 0;
   }
-  
+
   .pagination-btn,
   .pagination-number {
     width: 30px;
@@ -262,7 +267,7 @@
     min-width: 30px;
     font-size: 11px;
   }
-  
+
   .pagination-numbers {
     gap: 4px;
   }

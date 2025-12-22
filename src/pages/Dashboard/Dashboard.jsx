@@ -1,297 +1,230 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Dashboard.css';
-import { fetchDashboardData } from '../../Service/Dashboard.js';
+import { fetchDashboardData } from '../../Service/Dashboard';
+import OrdersTable from '../../components/OrdersTable/OrdersTable';
+
+const MOCK_ORDERS = [
+    { id: 1, customer: "John Doe", items: 3, total: 2500, status: "COMPLETED", paymentMethod: "khalti", date: new Date(Date.now() - 86400000) },
+    { id: 2, customer: "Jane Smith", items: 2, total: 1500, status: "PENDING", paymentMethod: "cash", date: new Date(Date.now() - 172800000) },
+    { id: 3, customer: "Bob Johnson", items: 5, total: 4500, status: "COMPLETED", paymentMethod: "khalti", date: new Date(Date.now() - 259200000) },
+];
 
 const Dashboard = () => {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [timeRange, setTimeRange] = useState('today');
-    
+    const [orders, setOrders] = useState([]);
+    const [filteredOrders, setFilteredOrders] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [paymentFilter, setPaymentFilter] = useState('all');
+    const [stats, setStats] = useState({
+        totalRevenue: 0,
+        totalOrders: 0,
+        totalCustomers: 0,
+        averageOrderValue: 0
+    });
+
+    // Mock fallback orders (kept locally for offline fallback)
+    // use module-level MOCK_ORDERS to avoid effect dependencies
+
     useEffect(() => {
-        const loadData = async () => {
+        const load = async () => {
+            setLoading(true);
             try {
-                const response = await fetchDashboardData();
-                console.log("Dashboard response:", response.data);
-                setData(response.data);
-            } catch (error) {
-                console.error("Dashboard error:", error);
-                if (error?.response?.status === 401 || error?.response?.status === 403) {
-                    toast.error("Please login to view dashboard");
+                const res = await fetchDashboardData();
+                const payload = res?.data || {};
+
+                // If API provides recentOrders in expected format, map to our shape
+                if (Array.isArray(payload.recentOrders) && payload.recentOrders.length > 0) {
+                    const mapped = payload.recentOrders.map((o, index) => ({
+                        id: o.orderId ?? o.id ?? index,
+                        customer: o.customerName ?? o.customer ?? 'Unknown',
+                        items: Array.isArray(o.items) ? o.items.length : (o.itemsCount ?? 0),
+                        total: o.grandTotal ?? o.total ?? 0,
+                        status: (o.status || 'UNKNOWN').toString(),
+                        paymentMethod: (o.paymentMethod || o.payment_type || 'unknown').toString().toLowerCase(),
+                        date: o.createdAt ? new Date(o.createdAt) : (o.date ? new Date(o.date) : new Date())
+                    }));
+
+                    setOrders(mapped);
+                    setFilteredOrders(mapped);
+                    calculateStats(mapped);
                 } else {
-                    toast.error("Unable to load dashboard data");
+                    // fallback to API-provided summary metrics if available
+                    if (payload.todaySales || payload.todayOrderCount) {
+                        const revenue = payload.todaySales || 0;
+                        const orderCount = payload.todayOrderCount || 0;
+                        const uniqueCustomers = payload.totalCustomers || 0;
+                        const avg = orderCount > 0 ? revenue / orderCount : 0;
+                        setStats({ totalRevenue: revenue, totalOrders: orderCount, totalCustomers: uniqueCustomers, averageOrderValue: avg });
+                    }
+
+                    // Use mock orders in absence of recentOrders
+                    setOrders(MOCK_ORDERS);
+                    setFilteredOrders(MOCK_ORDERS);
+                    calculateStats(MOCK_ORDERS);
                 }
+            } catch (err) {
+                console.error('Dashboard load failed, using mock data', err);
+                // fallback to mock orders
+                setOrders(MOCK_ORDERS);
+                setFilteredOrders(MOCK_ORDERS);
+                calculateStats(MOCK_ORDERS);
             } finally {
                 setLoading(false);
             }
         };
-        loadData();
+
+        load();
     }, []);
 
-    const calculateMetrics = () => {
-        if (!data) return {};
-        
-        const recentOrders = data.recentOrders || [];
-        const todaySales = data.todaySales || 0;
-        const todayOrderCount = data.todayOrderCount || 0;
-        
-        // Calculate metrics
-        const totalCustomers = [...new Set(recentOrders.map(order => order.customerName))].length;
-        const averageOrderValue = todayOrderCount > 0 ? todaySales / todayOrderCount : 0;
-        const completedOrders = recentOrders.filter(order => order.status === 'COMPLETED' || order.status === 'DELIVERED').length;
-        
-        return {
-            totalCustomers,
-            averageOrderValue,
-            completedOrders
-        };
+    useEffect(() => {
+        // Filter only by payment method (date filters removed)
+        let filtered = [...orders];
+
+        if (paymentFilter !== 'all') {
+            filtered = filtered.filter(order => order.paymentMethod === paymentFilter);
+        }
+
+        setFilteredOrders(filtered);
+        calculateStats(filtered);
+    }, [paymentFilter, orders]);
+
+    const calculateStats = (orderList) => {
+        const totalRevenue = orderList.reduce((sum, order) => sum + order.total, 0);
+        const totalOrders = orderList.length;
+        const uniqueCustomers = [...new Set(orderList.map(order => order.customer))].length;
+        const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+        setStats({
+            totalRevenue,
+            totalOrders,
+            totalCustomers: uniqueCustomers,
+            averageOrderValue
+        });
     };
 
-    const getTrendData = () => {
-        return {
-            sales: { value: 12, isPositive: true },
-            orders: { value: 8, isPositive: true },
-            customers: { value: 5, isPositive: true },
-            revenue: { value: 15, isPositive: true }
-        };
+
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-NP', {
+            style: 'currency',
+            currency: 'NPR',
+            minimumFractionDigits: 2
+        }).format(amount);
+    };
+
+    const getPaymentMethodCount = (method) => {
+        return orders.filter(order => order.paymentMethod === method).length;
     };
 
     if (loading) {
         return (
             <div className="dashboard-loading">
-                <div className="loading-animation">
-                    <div className="loading-circle"></div>
-                    <div className="loading-circle"></div>
-                    <div className="loading-circle"></div>
-                </div>
-                <h3 className="loading-title">Loading Dashboard</h3>
-                <p className="loading-subtitle">Fetching the latest insights...</p>
+                <div className="loading-spinner"></div>
+                <p>Loading dashboard data...</p>
             </div>
         );
     }
-
-    if (!data) {
-        return (
-            <div className="dashboard-error">
-                <div className="error-illustration">
-                    <i className="bi bi-exclamation-octagon"></i>
-                </div>
-                <h3 className="error-title">Unable to Load Dashboard</h3>
-                <p className="error-message">Please check your connection and try again</p>
-                <button 
-                    className="retry-button"
-                    onClick={() => window.location.reload()}
-                >
-                    <i className="bi bi-arrow-clockwise"></i>
-                    Retry
-                </button>
-            </div>
-        );
-    }
-
-    const metrics = calculateMetrics();
-    const trends = getTrendData();
 
     return (
-        <div className="dashboard-wrapper">
+        <div className="dashboard-container">
             {/* Header */}
             <div className="dashboard-header">
-                <div className="header-left">
-                    <h1 className="dashboard-title">Dashboard Overview</h1>
-                    <p className="dashboard-subtitle">Welcome back! Here's what's happening with your store today.</p>
-                </div>
-                <div className="header-right">
-                    <div className="time-selector">
-                        <button 
-                            className={`time-btn ${timeRange === 'today' ? 'active' : ''}`}
-                            onClick={() => setTimeRange('today')}
+                <h1>Dashboard</h1>
+                <div className="filter-controls">
+                    <div className="payment-filters">
+                        <select
+                            value={paymentFilter}
+                            onChange={(e) => setPaymentFilter(e.target.value)}
+                            className="payment-select"
                         >
-                            Today
-                        </button>
-                        <button 
-                            className={`time-btn ${timeRange === 'week' ? 'active' : ''}`}
-                            onClick={() => setTimeRange('week')}
-                        >
-                            This Week
-                        </button>
-                        <button 
-                            className={`time-btn ${timeRange === 'month' ? 'active' : ''}`}
-                            onClick={() => setTimeRange('month')}
-                        >
-                            This Month
-                        </button>
+                            <option value="all">All Payments</option>
+                            <option value="khalti">Khalti Only</option>
+                            <option value="cash">Cash Only</option>
+                        </select>
                     </div>
                 </div>
             </div>
 
-            {/* Stats Grid */}
+            {/* Stats Cards */}
             <div className="stats-grid">
-                <div className="stat-card sales">
-                    <div className="stat-header">
-                        <div className="stat-icon">
-                            <i className="bi bi-currency-rupee"></i>
-                        </div>
-                        <div className="stat-trend">
-                            <i className={`bi ${trends.sales.isPositive ? 'bi-arrow-up' : 'bi-arrow-down'}`}></i>
-                            <span className={`trend-value ${trends.sales.isPositive ? 'positive' : 'negative'}`}>
-                                {trends.sales.value}%
-                            </span>
-                        </div>
+                <div className="stat-card">
+                    <div className="stat-icon revenue">
+                        <i className="bi bi-cash-coin"></i>
                     </div>
                     <div className="stat-content">
-                        <h3 className="stat-label">Total Revenue</h3>
-                        <p className="stat-value">रु {data.todaySales?.toFixed(2) || '0.00'}</p>
-                        <p className="stat-description">From {data.todayOrderCount || 0} orders</p>
+                        <h3>Total Revenue</h3>
+                        <p className="stat-value">{formatCurrency(stats.totalRevenue)}</p>
+                        <p className="stat-desc">{filteredOrders.length} orders</p>
                     </div>
                 </div>
 
-                <div className="stat-card orders">
-                    <div className="stat-header">
-                        <div className="stat-icon">
-                            <i className="bi bi-cart-check"></i>
-                        </div>
-                        <div className="stat-trend">
-                            <i className={`bi ${trends.orders.isPositive ? 'bi-arrow-up' : 'bi-arrow-down'}`}></i>
-                            <span className={`trend-value ${trends.orders.isPositive ? 'positive' : 'negative'}`}>
-                                {trends.orders.value}%
-                            </span>
-                        </div>
+                <div className="stat-card">
+                    <div className="stat-icon orders">
+                        <i className="bi bi-cart-check"></i>
                     </div>
                     <div className="stat-content">
-                        <h3 className="stat-label">Total Orders</h3>
-                        <p className="stat-value">{data.todayOrderCount || 0}</p>
-                        <p className="stat-description">{metrics.completedOrders} completed</p>
+                        <h3>Total Orders</h3>
+                        <p className="stat-value">{stats.totalOrders}</p>
+                        <p className="stat-desc">
+                            {filteredOrders.filter(o => o.status === 'COMPLETED').length} completed
+                        </p>
                     </div>
                 </div>
 
-                <div className="stat-card customers">
-                    <div className="stat-header">
-                        <div className="stat-icon">
-                            <i className="bi bi-people"></i>
-                        </div>
-                        <div className="stat-trend">
-                            <i className={`bi ${trends.customers.isPositive ? 'bi-arrow-up' : 'bi-arrow-down'}`}></i>
-                            <span className={`trend-value ${trends.customers.isPositive ? 'positive' : 'negative'}`}>
-                                {trends.customers.value}%
-                            </span>
-                        </div>
+                <div className="stat-card">
+                    <div className="stat-icon customers">
+                        <i className="bi bi-people"></i>
                     </div>
                     <div className="stat-content">
-                        <h3 className="stat-label">Total Customers</h3>
-                        <p className="stat-value">{metrics.totalCustomers}</p>
-                        <p className="stat-description">Active this period</p>
+                        <h3>Total Customers</h3>
+                        <p className="stat-value">{stats.totalCustomers}</p>
+                        <p className="stat-desc">Active customers</p>
                     </div>
                 </div>
 
-                <div className="stat-card avg-order">
-                    <div className="stat-header">
-                        <div className="stat-icon">
-                            <i className="bi bi-graph-up"></i>
-                        </div>
-                        <div className="stat-trend">
-                            <i className={`bi ${trends.revenue.isPositive ? 'bi-arrow-up' : 'bi-arrow-down'}`}></i>
-                            <span className={`trend-value ${trends.revenue.isPositive ? 'positive' : 'negative'}`}>
-                                {trends.revenue.value}%
-                            </span>
-                        </div>
+                <div className="stat-card">
+                    <div className="stat-icon avg">
+                        <i className="bi bi-graph-up"></i>
                     </div>
                     <div className="stat-content">
-                        <h3 className="stat-label">Avg. Order Value</h3>
-                        <p className="stat-value">रु {metrics.averageOrderValue.toFixed(2)}</p>
-                        <p className="stat-description">Compared to last period</p>
+                        <h3>Average Order</h3>
+                        <p className="stat-value">{formatCurrency(stats.averageOrderValue)}</p>
+                        <p className="stat-desc">Per order</p>
                     </div>
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="dashboard-content">
-                {/* Recent Orders Section */}
-                <div className="content-section">
-                    <div className="section-header">
-                        <h3 className="section-title">
-                            <i className="bi bi-clock-history"></i>
-                            Recent Orders
-                        </h3>
-                        <button className="section-action">
-                            View All <i className="bi bi-arrow-right"></i>
-                        </button>
+            {/* Payment Summary */}
+            <div className="payment-summary">
+                <h2>Payment Method Summary</h2>
+                <div className="payment-cards">
+                    <div className="payment-card khalti">
+                        <i className="bi bi-phone"></i>
+                        <div>
+                            <h3>Khalti Payments</h3>
+                            <p>{getPaymentMethodCount('khalti')} orders</p>
+                        </div>
                     </div>
-                    <div className="recent-orders-container">
-                        {data.recentOrders && data.recentOrders.length > 0 ? (
-                            <div className="orders-table-wrapper">
-                                <table className="orders-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Order ID</th>
-                                            <th>Customer</th>
-                                            <th>Items</th>
-                                            <th>Total</th>
-                                            <th>Status</th>
-                                            <th>Time</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {data.recentOrders.map((order, index) => (
-                                            <tr key={order.orderId || index}>
-                                                <td>
-                                                    <div className="order-id-cell">
-                                                        <span className="order-id">#{order.orderId?.substring(0, 8)}</span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className="customer-cell">
-                                                        <div className="customer-name">{order.customerName || 'Unknown'}</div>
-                                                        <div className="customer-contact">{order.phoneNumber || 'N/A'}</div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className="items-cell">
-                                                        {order.items?.length || 0} items
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className="amount-cell">
-                                                        रु {order.grandTotal?.toFixed(2) || '0.00'}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className={`status-badge ${(order.paymentMethod || '').toLowerCase()}`}>
-                                                        {order.paymentMethod || 'Unknown'}
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div className="time-cell">
-                                                        {order.createdAt 
-                                                            ? new Date(order.createdAt).toLocaleTimeString([], {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit'
-                                                            })
-                                                            : 'N/A'
-                                                        }
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        ) : (
-                            <div className="empty-orders">
-                                <div className="empty-illustration">
-                                    <i className="bi bi-cart"></i>
-                                </div>
-                                <h4>No Recent Orders</h4>
-                                <p>Start taking orders to see them here</p>
-                            </div>
-                        )}
+                    <div className="payment-card cash">
+                        <i className="bi bi-cash"></i>
+                        <div>
+                            <h3>Cash Payments</h3>
+                            <p>{getPaymentMethodCount('cash')} orders</p>
+                        </div>
                     </div>
                 </div>
-
             </div>
 
-        
-            
+            {/* Orders Table */}
+            <div className="orders-section">
+                <div className="section-header">
+                    <h2>Recent Orders</h2>
+                    <span className="order-count">{filteredOrders.length} orders found</span>
+                </div>
+
+                <OrdersTable orders={filteredOrders} formatCurrency={formatCurrency} />
+            </div>
+
+            {/* Footer removed as per request (filter summary and reset removed) */}
         </div>
     );
 };

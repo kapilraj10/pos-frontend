@@ -3,10 +3,11 @@
    ============================================ */
 
 .item-card {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  transition: all 0.25s ease;
+  background: #ffffff;
+  /* white card */
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 10px;
+  transition: all 0.18s ease;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -14,23 +15,23 @@
   width: 100%;
   overflow: hidden;
   position: relative;
+  color: #0f172a;
 }
 
 .item-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.1), transparent 60%);
+  background: radial-gradient(circle at 50% 0%, rgba(2, 6, 23, 0.02), transparent 60%);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
   pointer-events: none;
 }
 
 .item-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  border-color: rgba(16, 185, 129, 0.4);
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+  border-color: rgba(15, 23, 42, 0.08);
 }
 
 .item-card:hover::before {
@@ -45,23 +46,99 @@
 
 .item-cart-badge {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  font-size: 10px;
+  top: 8px;
+  right: 8px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 11px;
   font-weight: 600;
-  padding: 3px 8px;
+  padding: 4px 8px;
   border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
-  z-index: 2;
+  gap: 6px;
+  box-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
+  z-index: 3;
+}
+
+/* Card (image top) styling to mimic bootstrap card */
+.card-img-top {
+  width: 100%;
+  /* prefer a consistent aspect and cap height so all images match */
+  aspect-ratio: 16/9;
+  max-height: 140px;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  background-color: #f3f4f6;
+  /* subtle placeholder */
+}
+
+.card-body {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-title {
+  font-size: 13px;
+  margin: 0;
+  color: inherit;
+  font-weight: 700;
+  line-height: 1.15;
+  /* allow up to two wrapped lines and then clamp */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-text {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.card-footer {
+  padding: 6px 0 0 0;
+}
+
+.small-card {
+  min-height: 160px;
+  /* balanced compact size */
+}
+
+.item-payment-types {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.payment-type-badge {
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 11px;
 }
 
 .item-cart-badge i {
   font-size: 10px;
+}
+
+/* subtle top overlay on dark cards to improve contrast over images */
+.item-card.black-theme::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 36%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0));
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Item Image */
@@ -107,11 +184,11 @@
 }
 
 .item-name {
-  color: #fff;
-  font-size: 12px;
+  color: inherit;
+  font-size: 13px;
   font-weight: 600;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.15;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -121,51 +198,71 @@
   text-align: center;
 }
 
+/* Dark / Black theme variant for item card */
+.item-card.black-theme {
+  background: #0b0b0b;
+  color: #e6e6e6;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.item-card.black-theme .card-title,
+.item-card.black-theme .card-text,
+.item-card.black-theme .payment-type-badge,
+.item-card.black-theme .item-name {
+  color: #e6e6e6;
+}
+
+.item-card.black-theme .item-cart-badge {
+  background: #ffffff;
+  color: #0b0b0b;
+}
+
+.item-card.black-theme .item-add-btn,
+.item-card.black-theme .btn-sm {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.item-card.black-theme .item-price {
+  color: #86efac;
+  /* light green for price on dark cards */
+}
+
 /* Footer with Price and Add Button */
 .item-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin-top: auto;
 }
 
 .item-price {
-  color: #10b981;
-  font-size: 13px;
   font-weight: 700;
-  white-space: nowrap;
+  color: #0f172a;
 }
 
-/* Add Button */
-.item-add-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border: none;
-  border-radius: 6px;
+.item-add-btn,
+.btn-sm {
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 2px;
-  color: white;
-  font-size: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.item-add-btn i {
+  gap: 6px;
   font-size: 12px;
 }
 
-.item-add-btn:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+.item-add-btn:hover,
+.btn-sm:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .item-add-btn:active {
-  transform: scale(0.98);
+  transform: translateY(1px);
 }
 
 /* ============================================
@@ -177,20 +274,20 @@
     width: 45px;
     height: 45px;
   }
-  
+
   .item-name {
     font-size: 11px;
   }
-  
+
   .item-price {
     font-size: 12px;
   }
-  
+
   .item-add-btn {
     font-size: 9px;
     padding: 3px 6px;
   }
-  
+
   .item-add-btn i {
     font-size: 10px;
   }
@@ -202,19 +299,19 @@
     height: 55px;
     margin: 12px auto 8px;
   }
-  
+
   .item-content {
     padding: 8px 10px 10px;
   }
-  
+
   .item-name {
     font-size: 12px;
   }
-  
+
   .item-price {
     font-size: 13px;
   }
-  
+
   .item-add-btn {
     font-size: 10px;
     padding: 4px 8px;
@@ -226,26 +323,26 @@
     width: 50px;
     height: 50px;
   }
-  
+
   .item-content {
     padding: 6px 8px 8px;
   }
-  
+
   .item-name {
     font-size: 11px;
     -webkit-line-clamp: 2;
     line-clamp: 2;
   }
-  
+
   .item-price {
     font-size: 12px;
   }
-  
+
   .item-add-btn {
     font-size: 9px;
     padding: 3px 6px;
   }
-  
+
   .item-cart-badge {
     font-size: 9px;
     padding: 2px 6px;
@@ -259,19 +356,19 @@
     width: 60px;
     height: 60px;
   }
-  
+
   .item-content {
     padding: 10px;
   }
-  
+
   .item-name {
     font-size: 13px;
   }
-  
+
   .item-price {
     font-size: 14px;
   }
-  
+
   .item-add-btn {
     font-size: 11px;
     padding: 5px 10px;
