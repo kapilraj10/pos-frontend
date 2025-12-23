@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
+import "./ItemsList.css";
 
 const ItemsList = () => {
   const { items = [], categories = [], deleteItemById, updateItem } = useContext(AppContext);
@@ -68,8 +69,8 @@ const ItemsList = () => {
   };
 
   return (
-    <div className="container-fluid py-4">
-      <div className="container-fluid px-3">
+    <div className="container-fluid py-4 items-list">
+      <div className="container-fluid px-4">
         {/* Header */}
         <div className="row mb-4 align-items-center">
           <div className="col-md-6 mb-3 mb-md-0">
@@ -157,10 +158,10 @@ const ItemsList = () => {
         </div>
 
         {/* Items Table */}
-        <div className="card border shadow-sm">
+        <div className="card border shadow-sm w-100">
           <div className="card-body p-0">
             <div className="table-responsive">
-              <table className="table table-hover align-middle mb-0">
+              <table className="table table-hover align-middle mb-0 w-100">
                 <thead className="table-light">
                   <tr>
                     <th className="ps-4">Item</th>
@@ -240,7 +241,7 @@ const ItemsList = () => {
                         </td>
 
                         <td className="d-none d-md-table-cell">
-                          <div className="text-truncate" style={{ maxWidth: "360px" }}>
+                          <div className="text-truncate">
                             {item.description || (
                               <span className="text-muted fst-italic">No description</span>
                             )}

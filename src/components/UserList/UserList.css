@@ -47,6 +47,129 @@
     font-weight: 700;
 }
 
+/* New styles for user list card and table */
+.userlist-card {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(24, 25, 26, 0.06);
+    border: 1px solid rgba(16, 24, 40, 0.04);
+    overflow: hidden;
+}
+
+.userlist-table-wrapper {
+    width: 100%;
+    overflow: hidden;
+    /* prevent horizontal scrollbar when not needed */
+}
+
+.userlist-table {
+    border-collapse: separate !important;
+    border-spacing: 0 10px;
+    /* Adds space between rows */
+    width: 100% !important;
+    /* enforce full width */
+}
+
+.userlist-table thead.table-header th {
+    background: transparent;
+    color: #111827;
+    font-weight: 600;
+    padding: 16px 18px;
+    border-bottom: none;
+}
+
+.userlist-table tbody tr {
+    background: #fff;
+    border-radius: 8px;
+}
+
+.userlist-table tbody td {
+    padding: 14px 18px;
+    vertical-align: middle;
+    border-top: 0;
+}
+
+.avatar-lg {
+    width: 48px;
+    height: 48px;
+    font-size: 16px
+}
+
+.user-meta .user-name {
+    font-weight: 600
+}
+
+.user-meta .id-meta {
+    color: #6b7280;
+    font-size: 0.85rem
+}
+
+.user-email {
+    color: #111827;
+    max-width: 260px;
+    display: block
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.role-badge.admin {
+    background: #111827;
+    color: #fff
+}
+
+.role-badge.user {
+    background: #f3f4f6;
+    color: #374151
+}
+
+.delete-btn {
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+/* Pagination */
+.pagination-controls .page-indicator {
+    padding: 6px 10px;
+    color: #374151
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+    .table-responsive {
+        display: none;
+    }
+
+    .user-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px
+    }
+
+    .user-card {
+        border-radius: 8px;
+        padding: 12px;
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+        border: 1px solid rgba(15, 23, 42, 0.03)
+    }
+
+    .user-card .avatar-circle {
+        width: 44px;
+        height: 44px
+    }
+
+    .userlist-card {
+        box-shadow: none;
+        border: none
+    }
+}
+
 .user-cards {
     display: none;
     gap: 1rem;
@@ -91,4 +214,16 @@
 
 .action-btn {
     min-width: 90px;
+}
+
+/* Defensive fixes for parent flex layouts or accidental max-widths elsewhere */
+.userlist-card,
+.userlist-container,
+.userlist-table-wrapper {
+    max-width: 100% !important;
+}
+
+/* If the app layout uses flex, ensure the main card expands */
+.userlist-card {
+    flex: 1 1 auto
 }

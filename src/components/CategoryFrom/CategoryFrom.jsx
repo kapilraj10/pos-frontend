@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext.jsx";
 import { addCategory } from "../../Service/CategoryService.js";
 import { toast } from "react-toastify";
+import "./CategoryFrom.css";
 
 const CategoryForm = () => {
   const { categories, setCategories } = useContext(AppContext);
@@ -51,9 +52,9 @@ const CategoryForm = () => {
   };
 
   return (
-    <div className="container py-5">
-      <div className="card border-0 shadow-sm">
-        <div className="card-body">
+    <div className="container-fluid py-5 category-form">
+      <div className="card border-0 shadow-sm w-100">
+        <div className="card-body p-3 p-sm-4">
           <h5 className="mb-4">Create Category</h5>
 
           <form onSubmit={handleSubmit}>

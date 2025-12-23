@@ -59,7 +59,8 @@ const UserList = ({ users = [], setUsers }) => {
 
   return (
     <div className="container-fluid py-4">
-      <div className="container px-0">
+      {/* Use container-fluid so table can expand full width (avoids inner max-width constraint) */}
+      <div className="container-fluid px-3">
         {/* Header */}
         <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 px-3">
           <div>
@@ -134,11 +135,11 @@ const UserList = ({ users = [], setUsers }) => {
         </div>
 
         {/* Table */}
-        <div className="card border shadow-sm">
+        <div className="card userlist-card">
           <div className="card-body p-0">
-            <div className="table-responsive">
-              <table className="table table-hover align-middle mb-0">
-                <thead className="table-light">
+            <div className="userlist-table-wrapper">
+              <table className="table table-hover align-middle mb-0 userlist-table w-100" style={{ width: '100%' }}>
+                <thead className="table-header">
                   <tr>
                     <th className="ps-4" style={{ cursor: 'pointer' }} onClick={() => toggleSort('name')}>
                       User {sortField === 'name' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}
@@ -171,41 +172,32 @@ const UserList = ({ users = [], setUsers }) => {
                     <tr key={user.id}>
                       <td className="ps-4">
                         <div className="d-flex align-items-center gap-3">
-                          <div
-                            className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
-                            style={{
-                              width: 40,
-                              height: 40,
-                              backgroundColor: user.role === "ROLE_ADMIN" ? "#495057" : "#6c757d"
-                            }}
-                          >
+                          <div className="avatar-circle avatar-lg" style={{ backgroundColor: user.role === "ROLE_ADMIN" ? "#343a40" : "#6c757d" }}>
                             {user.name?.[0]?.toUpperCase() || "U"}
                           </div>
-                          <div>
-                            <div className="fw-medium">{user.name || "Unnamed User"}</div>
-                            <small className="text-muted">ID: {String(user.id ?? '').substring(0, 8)}{user.id ? '...' : ''}</small>
+                          <div className="user-meta">
+                            <div className="user-name">{user.name || "Unnamed User"}</div>
+                            <small className="text-muted id-meta">ID: {String(user.id ?? '').substring(0, 8)}{user.id ? '...' : ''}</small>
                           </div>
                         </div>
                       </td>
 
                       <td>
-                        <span className="text-dark">{user.email}</span>
+                        <div className="user-email text-truncate">{user.email}</div>
                       </td>
 
                       <td>
-                        <span className={`badge ${user.role === "ROLE_ADMIN"
-                          ? "bg-dark"
-                          : "bg-secondary"
-                          } px-3 py-1`}>
+                        <span className={`role-badge ${user.role === "ROLE_ADMIN" ? 'admin' : 'user'}`}>
                           {user.role === "ROLE_ADMIN" ? "Admin" : "User"}
                         </span>
                       </td>
 
                       <td className="text-end pe-4">
                         <button
-                          className="btn btn-sm btn-outline-dark"
+                          className="btn btn-sm btn-outline-danger delete-btn"
                           onClick={() => handleDelete(user.id)}
                           disabled={loadingId === user.id}
+                          aria-label={`Delete ${user.name || 'user'}`}
                         >
                           {loadingId === user.id ? (
                             <>
@@ -243,8 +235,8 @@ const UserList = ({ users = [], setUsers }) => {
                     </div>
                   </div>
                   <div className="right d-flex align-items-center gap-2">
-                    <span className={`badge ${user.role === 'ROLE_ADMIN' ? 'bg-dark' : 'bg-secondary'} px-3 py-1`}>{user.role === 'ROLE_ADMIN' ? 'Admin' : 'User'}</span>
-                    <button className="btn btn-sm btn-outline-dark action-btn" onClick={() => handleDelete(user.id)}>
+                    <span className={`role-badge ${user.role === 'ROLE_ADMIN' ? 'admin' : 'user'}`}>{user.role === 'ROLE_ADMIN' ? 'Admin' : 'User'}</span>
+                    <button className="btn btn-sm btn-outline-danger action-btn" onClick={() => handleDelete(user.id)}>
                       <i className="bi bi-trash me-1"></i>
                       Delete
                     </button>
@@ -256,22 +248,22 @@ const UserList = ({ users = [], setUsers }) => {
             {/* Results Count */}
             {filteredUsers.length > 0 && (
               <div className="card-footer bg-white border-top py-3">
-                <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
                   <div className="d-flex align-items-center gap-3">
                     <small className="text-muted">
-                      Showing {((currentPage - 1) * pageSize) + (pagedUsers.length)} of {filteredUsers.length} users
+                      Showing {(currentPage - 1) * pageSize + 1}–{(currentPage - 1) * pageSize + pagedUsers.length} of {filteredUsers.length}
                     </small>
-                    <select className="form-select form-select-sm" value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} style={{ width: 90 }}>
+                    <select className="form-select form-select-sm" value={pageSize} onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }} style={{ width: 110 }}>
                       <option value={5}>5 / page</option>
                       <option value={10}>10 / page</option>
                       <option value={20}>20 / page</option>
                     </select>
                   </div>
 
-                  <div className="d-flex align-items-center gap-2">
-                    <button className="btn btn-sm btn-outline-secondary" disabled={currentPage <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Previous</button>
-                    <div className="px-2">Page {currentPage} / {totalPages}</div>
-                    <button className="btn btn-sm btn-outline-secondary" disabled={currentPage >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>Next</button>
+                  <div className="pagination-controls d-flex align-items-center gap-2">
+                    <button className="btn btn-sm btn-outline-secondary" disabled={currentPage <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} aria-label="Previous page">‹</button>
+                    <div className="page-indicator">Page {currentPage} / {totalPages}</div>
+                    <button className="btn btn-sm btn-outline-secondary" disabled={currentPage >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} aria-label="Next page">›</button>
                   </div>
                 </div>
               </div>

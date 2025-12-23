@@ -1,0 +1,26 @@
+/* Scoped layout fixes for CategoryForm component */
+.category-form {
+    width: 100%;
+}
+
+.category-form .card {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+.category-form .card-body {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+}
+
+.category-form .form-control {
+    width: 100% !important;
+}
+
+@media (min-width: 768px) {
+    .category-form .card-body {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+}

@@ -1,0 +1,31 @@
+/* Scoped layout fixes for ItemsList component */
+.items-list .card {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+.items-list .table-responsive {
+    display: block !important;
+    width: 100% !important;
+}
+
+.items-list table {
+    width: 100% !important;
+    table-layout: auto;
+    /* allow proportional column sizing */
+}
+
+/* Ensure row/columns inside this component don't collapse when inside flex containers */
+.items-list .row,
+.items-list .content {
+    width: 100% !important;
+}
+
+.items-list .row>[class*="col-"] {
+    display: block;
+}
+
+/* Optional: make description cell flexible so columns resize proportionally */
+.items-list td.text-truncate {
+    max-width: none !important;
+}

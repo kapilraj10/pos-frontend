@@ -325,3 +325,67 @@
     width: 100%;
   }
 }
+
+/* Layout fixes to ensure table and card take full available width for this component */
+.category-list .card {
+  width: 100% !important;
+}
+
+.category-list .table-wrapper,
+.category-list .table-responsive {
+  width: 100% !important;
+}
+
+.category-list table {
+  width: 100% !important;
+}
+
+/* Optional flex/grid fix if parent content uses flex layout */
+.category-list .content {
+  display: flex;
+}
+
+.category-list .content>div {
+  flex: 1;
+}
+
+/* Debug helper (temporary) - uncomment to outline parent boxes when debugging
+.category-list * {
+  outline: 0px solid transparent;
+}
+*/
+
+/* Additional scoped overrides to remove any remaining max-width constraints
+   and ensure the card, table wrapper and footer expand fully. These are
+   intentionally scoped to `.category-list` to avoid global side-effects. */
+.category-list .category-container {
+  max-width: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.category-list .card {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.category-list .card-footer {
+  width: 100% !important;
+}
+
+.category-list .table-responsive {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* If other layout containers use flex/grid, ensure children fill space */
+.category-list .row,
+.category-list .content {
+  width: 100% !important;
+}
+
+.category-list .row>[class*="col-"] {
+  display: block;
+}

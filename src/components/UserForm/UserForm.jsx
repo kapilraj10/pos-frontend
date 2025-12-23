@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { addUser } from "../../Service/UserService";
+import "./UserForm.css";
 
 const UserForm = ({ setUsers }) => {
   const [loading, setLoading] = useState(false);
@@ -42,109 +43,110 @@ const UserForm = ({ setUsers }) => {
   };
 
   return (
-    <div className="card shadow-sm border-0">
-      <div className="card-body p-4">
+    <div className="user-form">
+      <div className="card shadow-sm border-0 w-100">
+        <div className="card-body p-3 p-sm-4">
 
-        {/* Header */}
-        <div className="mb-4">
-          <h5 className="fw-bold mb-1">Create New User</h5>
-          <p className="text-muted small mb-0">
-            Add a regular user to the system
-          </p>
-        </div>
-
-        <form onSubmit={onSubmitHandler} className="row g-3">
-
-          {/* Name */}
-          <div className="col-12">
-            <label className="form-label">Full Name</label>
-            <div className="input-group">
-              <span className="input-group-text bg-white">
-                <i className="bi bi-person text-muted"></i>
-              </span>
-              <input
-                type="text"
-                name="name"
-                className="form-control"
-                placeholder="John Doe"
-                value={data.name}
-                onChange={onChangeHandler}
-              />
-            </div>
+          {/* Header */}
+          <div className="mb-4">
+            <h5 className="fw-bold mb-1">Create New User</h5>
+            <p className="text-muted small mb-0">
+              Add a regular user to the system
+            </p>
           </div>
 
-          {/* Email */}
-          <div className="col-12">
-            <label className="form-label">Email Address</label>
-            <div className="input-group">
-              <span className="input-group-text bg-white">
-                <i className="bi bi-envelope text-muted"></i>
-              </span>
-              <input
-                type="email"
-                name="email"
-                className="form-control"
-                placeholder="john@example.com"
-                value={data.email}
-                onChange={onChangeHandler}
-              />
-            </div>
-          </div>
+          <form onSubmit={onSubmitHandler} className="row g-3">
 
-          {/* Password */}
-          <div className="col-12">
-            <label className="form-label">Password</label>
-            <div className="input-group">
-              <span className="input-group-text bg-white">
-                <i className="bi bi-lock text-muted"></i>
-              </span>
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                className="form-control"
-                placeholder="******"
-                value={data.password}
-                onChange={onChangeHandler}
-              />
+            {/* Name */}
+            <div className="col-12">
+              <label className="form-label">Full Name</label>
+              <div className="input-group">
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-person text-muted"></i>
+                </span>
+                <input
+                  type="text"
+                  name="name"
+                  className="form-control"
+                  placeholder="John Doe"
+                  value={data.name}
+                  onChange={onChangeHandler}
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="col-12">
+              <label className="form-label">Email Address</label>
+              <div className="input-group">
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-envelope text-muted"></i>
+                </span>
+                <input
+                  type="email"
+                  name="email"
+                  className="form-control"
+                  placeholder="john@example.com"
+                  value={data.email}
+                  onChange={onChangeHandler}
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="col-12">
+              <label className="form-label">Password</label>
+              <div className="input-group">
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-lock text-muted"></i>
+                </span>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  className="form-control"
+                  placeholder="******"
+                  value={data.password}
+                  onChange={onChangeHandler}
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  <i
+                    className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
+                      }`}
+                  ></i>
+                </button>
+              </div>
+              <small className="text-muted">
+                Minimum 6 characters
+              </small>
+            </div>
+
+            {/* Submit */}
+            <div className="col-12">
               <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={() => setShowPassword(!showPassword)}
+                type="submit"
+                className="btn btn-primary w-100"
+                disabled={loading}
               >
-                <i
-                  className={`bi ${
-                    showPassword ? "bi-eye-slash" : "bi-eye"
-                  }`}
-                ></i>
+                {loading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-person-plus me-2 text-dark"></i>
+                    Create User
+                  </>
+                )}
               </button>
             </div>
-            <small className="text-muted">
-              Minimum 6 characters
-            </small>
-          </div>
 
-          {/* Submit */}
-          <div className="col-12">
-            <button
-              type="submit"
-              className="btn btn-primary w-100"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" />
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-person-plus me-2 text-dark"></i>
-                  Create User
-                </>
-              )}
-            </button>
-          </div>
-
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

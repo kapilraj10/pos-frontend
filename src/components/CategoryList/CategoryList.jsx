@@ -66,8 +66,9 @@ const CategoryList = () => {
   };
 
   return (
-    <div className="container-fluid py-4">
-      <div className="container px-0">
+    <div className="container-fluid py-4 category-list">
+      {/* Use full-width container to avoid Bootstrap's fixed max-width container */}
+      <div className="container-fluid px-4">
 
         {/* Header */}
         <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 px-3">
@@ -141,10 +142,11 @@ const CategoryList = () => {
         </div>
 
         {/* Table */}
-        <div className="card border shadow-sm">
+        <div className="card border shadow-sm w-100">
           <div className="card-body p-0">
             <div className="table-responsive">
-              <table className="table table-hover align-middle mb-0">
+              {/* ensure table takes full available width */}
+              <table className="table table-hover align-middle mb-0 w-100">
                 <thead className="table-light">
                   <tr>
                     <th className="ps-4" style={{ cursor: "pointer" }} onClick={() => toggleSort('name')}>

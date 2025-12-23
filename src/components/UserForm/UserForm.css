@@ -1,0 +1,31 @@
+/* Scoped layout fixes for UserForm component */
+.user-form {
+    width: 100%;
+}
+
+.user-form .card {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+}
+
+.user-form .card-body {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+}
+
+.user-form .form-label {
+    font-weight: 600;
+}
+
+/* Ensure inputs grow to full width */
+.user-form .input-group .form-control {
+    width: 100% !important;
+}
+
+/* Make buttons full width on small screens but balanced on larger screens */
+@media (min-width: 768px) {
+    .user-form .btn.w-100 {
+        max-width: 100%;
+    }
+}
