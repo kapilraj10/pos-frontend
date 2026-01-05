@@ -21,6 +21,7 @@ const CartSummary = ({
   const [isProcessing, setProcessing] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [autoShowPrint, setAutoShowPrint] = useState(false);
 
   const tax = totalAmount * 0.13;
   const grandTotal = totalAmount + tax;
@@ -104,38 +105,71 @@ const CartSummary = ({
       return;
     }
 
+    // For Cash payment - place order directly without preview popup
     setProcessing(true);
 
     try {
       console.log("Cart Items at payment:", cartItems);
 
-      // Create order details for preview (NOT posting to backend yet)
-      const orderPreview = {
-        id: `preview-${Date.now()}`,
-        customerName,
-        customerMobile,
-        paymentMode: paymentMode.toLowerCase(),
-        items: cartItems.map((item) => ({
+      // Prepare order data for backend
+      const orderData = {
+        customerName: customerName,
+        phoneNumber: customerMobile,
+        subTotal: parseFloat(totalAmount.toFixed(2)),
+        tax: parseFloat(tax.toFixed(2)),
+        grandTotal: parseFloat(grandTotal.toFixed(2)),
+        paymentMethod: paymentMode.toUpperCase(),
+        cartItems: cartItems.map((item) => ({
           itemId: item.id,
-          name: item.name,
           quantity: item.quantity,
           price: item.price,
         })),
-        subtotal: parseFloat(totalAmount.toFixed(2)),
-        tax: parseFloat(tax.toFixed(2)),
-        totalAmount: parseFloat(grandTotal.toFixed(2)),
       };
 
-      console.log("Order preview created:", orderPreview);
+      console.log("Placing Cash order directly:", JSON.stringify(orderData, null, 2));
 
-      // Set order details for preview
-      setOrderDetails(orderPreview);
+      // Post order to backend
+      const response = await createOrder(orderData);
 
-      // Show receipt popup for review (Cash payment only)
-      setShowPopup(true);
+      if (response && response.status === 201) {
+        // Create completed order details for receipt display
+        const completedOrder = {
+          id: response.data.id || response.data.orderId || 'ORD-' + Date.now(),
+          customerName: customerName,
+          customerMobile: customerMobile,
+          paymentMode: paymentMode.toUpperCase(),
+          items: cartItems.map((item) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          subtotal: parseFloat(totalAmount.toFixed(2)),
+          tax: parseFloat(tax.toFixed(2)),
+          totalAmount: parseFloat(grandTotal.toFixed(2)),
+          createdAt: new Date().toISOString(),
+        };
+
+        setOrderDetails(completedOrder);
+
+        // Clear cart and customer info
+        clearCart();
+        clearAll();
+        // Refresh items to reflect decremented stock after order
+        try { await refreshItems(); } catch (e) { console.error('Failed to refresh items after order', e); }
+
+        toast.success("Order placed successfully!");
+
+        // Show receipt popup and auto-trigger print
+        setShowPopup(true);
+        setAutoShowPrint(true);
+      } else {
+        toast.error("Failed to place order. Please try again.");
+        console.error("Unexpected response:", response);
+      }
     } catch (err) {
-      console.error("Payment preview error:", err);
-      toast.error("Failed to process payment. Please try again.");
+      console.error("Order placement error:", err);
+      console.error("Error response:", err.response?.data);
+      toast.error(err.response?.data?.message || "Failed to place order. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -188,8 +222,8 @@ const CartSummary = ({
 
         toast.success("Order placed successfully!");
 
-        // Keep showing the receipt popup - don't auto print
-        // User can click Print button if needed
+        // Auto-show print dialog after successful order placement
+        setAutoShowPrint(true);
       } else {
         toast.error("Failed to place order. Please try again.");
         console.error("Unexpected response:", response);
@@ -263,9 +297,13 @@ const CartSummary = ({
       {showPopup && (
         <ReceiptPopup
           orderDetails={orderDetails}
-          onClose={() => setShowPopup(false)}
+          onClose={() => {
+            setShowPopup(false);
+            setAutoShowPrint(false);
+          }}
           onPrint={handlePrintReceipt}
           onPlaceOrder={handlePlaceOrder}
+          autoShowPrint={autoShowPrint}
         />
       )}
     </div>

@@ -133,6 +133,7 @@ const OrderHistory = () => {
     const getPaymentBadgeClass = (method) => {
         const normalized = (method || '').toUpperCase();
         if (normalized === 'CASH') return 'payment-badge payment-cash';
+        if (normalized.includes('KHALTI')) return 'payment-badge payment-khalti';
         if (normalized === 'CARD' || normalized === 'CREDIT_CARD' || normalized === 'DEBIT_CARD')
             return 'payment-badge payment-card';
         if (normalized === 'ONLINE' || normalized === 'DIGITAL' || normalized === 'UPI')
@@ -149,81 +150,250 @@ const OrderHistory = () => {
         return 'order-status status-processing';
     };
 
-    // Print receipt function
+    // Print receipt function - Works for ALL payment methods (Cash, Khalti, etc.)
     const printReceipt = (order) => {
-        const printWindow = window.open('', '', 'height=600,width=400');
+        // Validate order status - only allow printing for completed orders
+        const orderStatus = (order.status || 'PENDING').toUpperCase();
+        const allowedStatuses = ['DELIVERED', 'COMPLETED', 'READY'];
+
+        if (!allowedStatuses.includes(orderStatus)) {
+            toast.warning('Receipt can only be printed for completed/delivered orders');
+            return;
+        }
+
+        const printWindow = window.open('', '', 'height=700,width=450');
         printWindow.document.write('<html><head><title>Receipt - ' + order.orderId + '</title>');
         printWindow.document.write('<style>');
         printWindow.document.write(`
-            body { font-family: 'Courier New', monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
-            .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 15px; }
-            .receipt-header h2 { margin: 5px 0; font-size: 20px; }
-            .receipt-header p { margin: 2px 0; font-size: 12px; }
-            .order-info { margin-bottom: 15px; font-size: 12px; }
-            .order-info p { margin: 3px 0; }
-            .items-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-            .items-table th { text-align: left; border-bottom: 1px solid #000; padding: 5px 0; font-size: 11px; }
-            .items-table td { padding: 5px 0; font-size: 11px; }
-            .totals { border-top: 1px solid #000; padding-top: 10px; margin-top: 10px; }
-            .totals p { display: flex; justify-content: space-between; margin: 5px 0; font-size: 12px; }
-            .grand-total { font-size: 14px; font-weight: bold; border-top: 2px solid #000; padding-top: 10px; }
-            .footer { text-align: center; margin-top: 20px; border-top: 2px dashed #000; padding-top: 10px; font-size: 11px; }
-            @media print { body { padding: 0; } }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+                font-family: 'Courier New', monospace; 
+                padding: 20px; 
+                max-width: 400px; 
+                margin: 0 auto;
+                background: white;
+            }
+            .receipt-header { 
+                text-align: center; 
+                border-bottom: 2px dashed #000; 
+                padding-bottom: 15px; 
+                margin-bottom: 20px; 
+            }
+            .receipt-header h1 { 
+                margin: 5px 0 10px 0; 
+                font-size: 24px; 
+                font-weight: bold;
+                letter-spacing: 2px;
+            }
+            .receipt-header p { 
+                margin: 3px 0; 
+                font-size: 13px; 
+                color: #333;
+            }
+            .divider { 
+                border-bottom: 1px dashed #666; 
+                margin: 15px 0; 
+            }
+            .order-info { 
+                margin-bottom: 20px; 
+                font-size: 13px; 
+                line-height: 1.6;
+            }
+            .order-info p { 
+                margin: 5px 0;
+                display: flex;
+                justify-content: space-between;
+            }
+            .order-info strong { 
+                font-weight: bold; 
+                min-width: 100px;
+            }
+            .payment-badge {
+                display: inline-block;
+                padding: 2px 8px;
+                background: #f0f0f0;
+                border-radius: 3px;
+                font-weight: bold;
+            }
+            .payment-cash { background: #d4edda; color: #155724; }
+            .payment-khalti { background: #e7d4f5; color: #5b2c91; }
+            .payment-card { background: #cce5ff; color: #004085; }
+            .items-section { margin: 20px 0; }
+            .items-section h3 { 
+                font-size: 14px; 
+                margin-bottom: 10px;
+                border-bottom: 2px solid #000;
+                padding-bottom: 5px;
+            }
+            .items-table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin: 10px 0; 
+            }
+            .items-table th { 
+                text-align: left; 
+                border-bottom: 2px solid #000; 
+                padding: 8px 2px; 
+                font-size: 11px;
+                font-weight: bold;
+            }
+            .items-table td { 
+                padding: 8px 2px; 
+                font-size: 12px;
+                border-bottom: 1px dotted #ccc;
+            }
+            .items-table tr:last-child td {
+                border-bottom: none;
+            }
+            .items-table .text-right { text-align: right; }
+            .items-table .text-center { text-align: center; }
+            .totals { 
+                border-top: 2px solid #000; 
+                padding-top: 15px; 
+                margin-top: 15px; 
+            }
+            .totals p { 
+                display: flex; 
+                justify-content: space-between; 
+                margin: 8px 0; 
+                font-size: 13px; 
+            }
+            .grand-total { 
+                font-size: 16px; 
+                font-weight: bold; 
+                border-top: 2px double #000; 
+                padding-top: 12px; 
+                margin-top: 12px;
+            }
+            .payment-info {
+                margin: 20px 0;
+                padding: 10px;
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            .payment-info p {
+                margin: 5px 0;
+                font-size: 12px;
+            }
+            .footer { 
+                text-align: center; 
+                margin-top: 25px; 
+                border-top: 2px dashed #000; 
+                padding-top: 15px; 
+                font-size: 12px; 
+            }
+            .footer p { margin: 5px 0; }
+            .footer .bold { font-weight: bold; font-size: 13px; }
+            @media print { 
+                body { padding: 10px; }
+                .no-print { display: none; }
+            }
         `);
         printWindow.document.write('</style></head><body>');
 
-        // Receipt Header
+        // Receipt Header - SAME FOR ALL PAYMENT METHODS
         printWindow.document.write('<div class="receipt-header">');
-        printWindow.document.write('<h2>POS SYSTEM</h2>');
-        printWindow.document.write('<p>Order Receipt</p>');
+        printWindow.document.write('<h1>⚡ POS SYSTEM ⚡</h1>');
+        printWindow.document.write('<p><strong>OFFICIAL RECEIPT</strong></p>');
+        printWindow.document.write('<p>Tel: +977-123-456789</p>');
+        printWindow.document.write('<p>Email: support@pos.com</p>');
         printWindow.document.write('</div>');
 
-        // Order Info
+        // Order Info - SAME FORMAT FOR ALL
         printWindow.document.write('<div class="order-info">');
-        printWindow.document.write('<p><strong>Order ID:</strong> ' + order.orderId + '</p>');
-        printWindow.document.write('<p><strong>Customer:</strong> ' + order.customerName + '</p>');
-        printWindow.document.write('<p><strong>Phone:</strong> ' + order.phoneNumber + '</p>');
-        printWindow.document.write('<p><strong>Date:</strong> ' + formatDate(order.createdAt) + ' ' + formatTime(order.createdAt) + '</p>');
-        printWindow.document.write('<p><strong>Status:</strong> ' + (order.status || 'PENDING') + '</p>');
-        printWindow.document.write('<p><strong>Payment:</strong> ' + order.paymentMethod + '</p>');
+        printWindow.document.write('<p><strong>Order ID:</strong> <span>' + order.orderId + '</span></p>');
+        printWindow.document.write('<p><strong>Date:</strong> <span>' + formatDate(order.createdAt) + '</span></p>');
+        printWindow.document.write('<p><strong>Time:</strong> <span>' + formatTime(order.createdAt) + '</span></p>');
+        printWindow.document.write('<p><strong>Customer:</strong> <span>' + order.customerName + '</span></p>');
+        printWindow.document.write('<p><strong>Phone:</strong> <span>' + order.phoneNumber + '</span></p>');
+        printWindow.document.write('<p><strong>Status:</strong> <span style="color: green; font-weight: bold;">' + orderStatus + '</span></p>');
         printWindow.document.write('</div>');
 
-        // Items Table
+        printWindow.document.write('<div class="divider"></div>');
+
+        // Items Section - SAME FOR ALL
+        printWindow.document.write('<div class="items-section">');
+        printWindow.document.write('<h3>ORDER ITEMS</h3>');
         printWindow.document.write('<table class="items-table">');
-        printWindow.document.write('<thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>');
+        printWindow.document.write('<thead><tr>');
+        printWindow.document.write('<th>Item</th>');
+        printWindow.document.write('<th class="text-center">Qty</th>');
+        printWindow.document.write('<th class="text-right">Price</th>');
+        printWindow.document.write('<th class="text-right">Total</th>');
+        printWindow.document.write('</tr></thead>');
         printWindow.document.write('<tbody>');
 
+        let totalItems = 0;
         (order.items || []).forEach(item => {
             const itemTotal = (item.price || 0) * (item.quantity || 0);
+            totalItems += item.quantity || 0;
             printWindow.document.write('<tr>');
             printWindow.document.write('<td>' + item.name + '</td>');
-            printWindow.document.write('<td>' + item.quantity + '</td>');
-            printWindow.document.write('<td>Rs. ' + (item.price || 0).toFixed(2) + '</td>');
-            printWindow.document.write('<td>Rs. ' + itemTotal.toFixed(2) + '</td>');
+            printWindow.document.write('<td class="text-center">' + item.quantity + '</td>');
+            printWindow.document.write('<td class="text-right">Rs. ' + (item.price || 0).toFixed(2) + '</td>');
+            printWindow.document.write('<td class="text-right">Rs. ' + itemTotal.toFixed(2) + '</td>');
             printWindow.document.write('</tr>');
         });
 
         printWindow.document.write('</tbody></table>');
-
-        // Totals
-        printWindow.document.write('<div class="totals">');
-        printWindow.document.write('<p><span>Subtotal:</span><span>Rs. ' + (order.subtotal || 0).toFixed(2) + '</span></p>');
-        printWindow.document.write('<p><span>Tax:</span><span>Rs. ' + (order.tax || 0).toFixed(2) + '</span></p>');
-        printWindow.document.write('<p class="grand-total"><span>Grand Total:</span><span>Rs. ' + (order.grandTotal || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('<p style="text-align: right; font-size: 12px; margin-top: 5px;">Total Items: ' + totalItems + '</p>');
         printWindow.document.write('</div>');
 
-        // Footer
+        // Totals Section - SAME FOR ALL
+        printWindow.document.write('<div class="totals">');
+        printWindow.document.write('<p><span>Subtotal:</span><span>Rs. ' + (order.subtotal || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('<p><span>Tax (13%):</span><span>Rs. ' + (order.tax || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('<p class="grand-total"><span>GRAND TOTAL:</span><span>Rs. ' + (order.grandTotal || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('</div>');
+
+        // Payment Method Section - SAME FORMAT, different content
+        const paymentMethod = (order.paymentMethod || 'CASH').toUpperCase();
+        let paymentClass = 'payment-badge payment-cash';
+        let paymentIcon = '💵';
+
+        if (paymentMethod === 'KHALTI' || paymentMethod.includes('KHALTI')) {
+            paymentClass = 'payment-badge payment-khalti';
+            paymentIcon = '📱';
+        } else if (paymentMethod === 'CARD' || paymentMethod.includes('CARD')) {
+            paymentClass = 'payment-badge payment-card';
+            paymentIcon = '💳';
+        }
+
+        printWindow.document.write('<div class="divider"></div>');
+        printWindow.document.write('<div class="payment-info">');
+        printWindow.document.write('<p style="text-align: center; font-weight: bold; margin-bottom: 8px;">PAYMENT DETAILS</p>');
+        printWindow.document.write('<p><strong>Method:</strong> <span class="' + paymentClass + '">' + paymentIcon + ' ' + paymentMethod + '</span></p>');
+        printWindow.document.write('<p><strong>Amount Paid:</strong> <span style="font-weight: bold;">Rs. ' + (order.grandTotal || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('<p><strong>Payment Status:</strong> <span style="color: green; font-weight: bold;">✓ COMPLETED</span></p>');
+
+        // Add payment-specific details
+        if (paymentMethod === 'KHALTI' || paymentMethod.includes('KHALTI')) {
+            printWindow.document.write('<p style="font-size: 11px; color: #666; margin-top: 8px;">Transaction ID: KHL' + order.orderId.substring(3) + '</p>');
+            printWindow.document.write('<p style="font-size: 11px; color: #666;">Paid via Khalti Digital Wallet</p>');
+        } else if (paymentMethod === 'CASH') {
+            printWindow.document.write('<p style="font-size: 11px; color: #666; margin-top: 8px;">Cash payment received</p>');
+            printWindow.document.write('<p style="font-size: 11px; color: #666;">Change: Rs. 0.00</p>');
+        }
+
+        printWindow.document.write('</div>');
+
+        // Footer - SAME FOR ALL
         printWindow.document.write('<div class="footer">');
-        printWindow.document.write('<p>Thank you for your order!</p>');
-        printWindow.document.write('<p>Visit again soon</p>');
+        printWindow.document.write('<p class="bold">★★★ THANK YOU FOR YOUR ORDER! ★★★</p>');
+        printWindow.document.write('<p>We appreciate your business</p>');
+        printWindow.document.write('<p style="margin-top: 10px; font-size: 11px;">Please visit us again!</p>');
+        printWindow.document.write('<p style="margin-top: 15px; font-size: 10px; color: #666;">This is a computer-generated receipt</p>');
         printWindow.document.write('</div>');
 
         printWindow.document.write('</body></html>');
         printWindow.document.close();
-        printWindow.print();
-    };
 
-    // Filter orders based on search, status, and payment filter
+        // Auto-print after a short delay
+        setTimeout(() => {
+            printWindow.print();
+        }, 250);
+    };    // Filter orders based on search, status, and payment filter
     const filteredOrders = orders.filter(order => {
         const matchesSearch = searchTerm === '' ||
             order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -428,10 +598,29 @@ const OrderHistory = () => {
                                         </div>
                                     </td>
                                     <td className="payment-cell">
-                                        <span className={getPaymentBadgeClass(order.paymentMethod)}>
-                                            <i className={`bi ${order.paymentMethod === 'CASH' ? 'bi-cash' : 'bi-credit-card'}`}></i>
-                                            {order.paymentMethod || 'UNKNOWN'}
-                                        </span>
+                                        {(() => {
+                                            const method = (order.paymentMethod || 'CASH').toUpperCase();
+                                            let icon = 'bi-cash';
+                                            let label = method;
+
+                                            if (method.includes('KHALTI')) {
+                                                icon = 'bi-wallet2';
+                                                label = 'KHALTI';
+                                            } else if (method.includes('CARD') || method === 'CREDIT_CARD' || method === 'DEBIT_CARD') {
+                                                icon = 'bi-credit-card';
+                                                label = 'CARD';
+                                            } else if (method === 'CASH') {
+                                                icon = 'bi-cash-stack';
+                                                label = 'CASH';
+                                            }
+
+                                            return (
+                                                <span className={getPaymentBadgeClass(order.paymentMethod)}>
+                                                    <i className={`bi ${icon}`}></i>
+                                                    {' ' + label}
+                                                </span>
+                                            );
+                                        })()}
                                     </td>
                                     <td>
                                         <span className={getStatusBadgeClass(order.status)}>
@@ -446,13 +635,23 @@ const OrderHistory = () => {
                                         </div>
                                     </td>
                                     <td className="actions-cell">
-                                        <button
-                                            className="btn btn-sm btn-primary"
-                                            onClick={() => printReceipt(order)}
-                                            title="Print Receipt"
-                                        >
-                                            <i className="bi bi-printer"></i> Print
-                                        </button>
+                                        {(() => {
+                                            const status = (order.status || 'PENDING').toUpperCase();
+                                            const isPrintable = ['DELIVERED', 'COMPLETED', 'READY'].includes(status);
+
+                                            return (
+                                                <button
+                                                    className={`btn btn-sm ${isPrintable ? 'btn-success' : 'btn-secondary'}`}
+                                                    onClick={() => printReceipt(order)}
+                                                    title={isPrintable ? 'Print Receipt' : 'Only completed orders can be printed'}
+                                                    disabled={!isPrintable}
+                                                    style={{ minWidth: '90px' }}
+                                                >
+                                                    <i className="bi bi-printer"></i>
+                                                    {isPrintable ? ' Print' : ' N/A'}
+                                                </button>
+                                            );
+                                        })()}
                                     </td>
                                 </tr>
                             ))}

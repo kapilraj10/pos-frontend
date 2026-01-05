@@ -28,21 +28,31 @@
 
 /* Header */
 .receipt-header {
-  background: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 20px;
+  padding: 24px;
   text-align: center;
+  border-bottom: 3px solid #5568d3;
 }
 
 .receipt-header h2 {
-  margin: 0 0 5px 0;
-  font-size: 24px;
+  margin: 0 0 8px 0;
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .receipt-subtitle {
-  margin: 0;
+  margin: 5px 0;
   font-size: 14px;
-  opacity: 0.9;
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+.receipt-contact {
+  margin: 5px 0 0 0;
+  font-size: 12px;
+  opacity: 0.85;
 }
 
 /* Body */
@@ -143,6 +153,49 @@ hr {
   font-size: 14px;
 }
 
+/* Payment Badge Styles - SAME for all payment methods */
+.payment-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 2px solid;
+  letter-spacing: 0.5px;
+}
+
+.payment-cash {
+  background: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.payment-khalti {
+  background: #e7d4f5;
+  color: #5b2c91;
+  border-color: #d4b0f0;
+}
+
+.payment-card {
+  background: #cce5ff;
+  color: #004085;
+  border-color: #b8daff;
+}
+
+.payment-section {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+.payment-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #333;
+}
+
 /* Action Buttons */
 .action-buttons {
   padding: 20px;
@@ -192,6 +245,7 @@ hr {
 
 /* Print Styles - No Blank Page Fix */
 @media print {
+
   /* Minimal margins to prevent blank first page */
   @page {
     size: A4 portrait;
@@ -205,7 +259,8 @@ hr {
   }
 
   /* Reset body and html */
-  html, body {
+  html,
+  body {
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -262,6 +317,7 @@ hr {
   .receipt-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
     color: white !important;
     padding: 12px 15px !important;
     margin: 0 !important;
@@ -279,7 +335,7 @@ hr {
     padding: 0 !important;
     letter-spacing: 0.8px;
     text-transform: uppercase;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     line-height: 1.1;
   }
 
@@ -454,7 +510,7 @@ hr {
 
   .total-row.grand-total span {
     color: white !important;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
   }
 
   /* Compact footer */
