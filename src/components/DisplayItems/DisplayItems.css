@@ -11,11 +11,18 @@
 }
 
 /* Items Header */
-.items-header {
+.items-header-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 14px;
+  flex: 0 0 auto;
+}
+
+.items-header {
+  display: flex;
+  align-items: center;
   flex: 0 0 auto;
 }
 
@@ -39,18 +46,18 @@
 
 /* Search Box Container */
 .items-search-container {
-  margin-bottom: 14px;
-  flex: 0 0 auto;
+  flex: 1;
+  max-width: 400px;
 }
 
-/* Items Grid Layout - 3x3 = 9 items */
+/* Items Grid Layout - 4x3 = 12 items */
 .items-grid {
   display: grid;
-  /* show 12 items on desktop: 4 columns x 3 rows */
+  /* Desktop: 4 columns x 3 rows = 12 items */
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  /* increased spacing between items as requested */
-  gap: 35px;
+  /* Optimized gap for 12 items */
+  gap: 20px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -209,20 +216,20 @@
 /* Large Tablet / Small Desktop */
 @media (max-width: 1200px) {
   .items-grid {
-    /* keep 4x3 at slightly smaller widths */
+    /* 4 columns x 3 rows = 12 items */
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    gap: 30px;
+    gap: 18px;
   }
 }
 
-/* Tablet: 2x2 Grid (4 items) */
+/* Tablet: 3 columns x 4 rows = 12 items */
 @media (max-width: 991px) {
   .items-grid {
-    /* keep showing 12 items but reduce columns to 3 (3 columns x 4 rows = 12) */
+    /* 3 columns x 4 rows = 12 items */
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(4, 1fr);
-    gap: 20px;
+    gap: 16px;
   }
 
   .items-container {
@@ -234,25 +241,29 @@
   }
 }
 
-/* Mobile: 2 columns */
+/* Mobile: 2 columns x 6 rows = 12 items */
 @media (max-width: 767px) {
   .items-grid {
-    /* mobile: 2 columns x 6 rows = 12 visible (if viewport allows) */
+    /* 2 columns x 6 rows = 12 items */
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(6, 1fr);
-    gap: 16px;
+    gap: 14px;
   }
 
   .items-container {
     padding: 12px;
   }
 
-  .items-header {
-    margin-bottom: 10px;
+  .items-header-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
   }
 
   .items-search-container {
-    margin-bottom: 12px;
+    max-width: 100%;
+    width: 100%;
   }
 
   .pagination-container {
@@ -273,12 +284,12 @@
   }
 }
 
-/* Small mobile - single column */
+/* Small mobile - 1 column x 12 rows = 12 items */
 @media (max-width: 400px) {
   .items-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    gap: 10px;
+    grid-template-rows: repeat(12, auto);
+    gap: 12px;
   }
 
   .item-card-wrapper {

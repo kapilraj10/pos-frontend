@@ -10,17 +10,17 @@ const DisplayItems = ({ selectedCategory }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Responsive items per page
-  const [itemsPerPage, setItemsPerPage] = useState(9);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   useEffect(() => {
     const updateItemsPerPage = () => {
       const width = window.innerWidth;
       if (width < 768) {
-        setItemsPerPage(1); // Mobile: 1 item per page
+        setItemsPerPage(12); // Mobile: 12 items per page
       } else if (width < 1024) {
-        setItemsPerPage(4); // Tablet: 4 items per page (2×2)
+        setItemsPerPage(12); // Tablet: 12 items per page
       } else {
-        setItemsPerPage(9); // Desktop: 9 items per page (3×3)
+        setItemsPerPage(12); // Desktop: 12 items per page (4×3)
       }
     };
 
@@ -129,14 +129,14 @@ const DisplayItems = ({ selectedCategory }) => {
 
   return (
     <div className='items-container'>
-      {/* Header with Item Count */}
-      <div className='items-header'>
-        <h5 className='items-count'>{filteredItems.length} Items</h5>
-      </div>
-
-      {/* Search Box */}
-      <div className='items-search-container'>
-        <SearchBox onSearch={setSearchText} />
+      {/* Header with Item Count and Search Box */}
+      <div className='items-header-wrapper'>
+        <div className='items-header'>
+          <h5 className='items-count'>{filteredItems.length} Items</h5>
+        </div>
+        <div className='items-search-container'>
+          <SearchBox onSearch={setSearchText} />
+        </div>
       </div>
 
       {/* Items Grid - 3x3 on desktop, 2x2 on tablet, 1x1 on mobile */}
