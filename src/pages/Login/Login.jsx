@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login } from "../../Service/AuthService";
 import "./Login.css";
-import loginBg from "../../assets/login-bg.jpg"; 
+import loginBg from "../../assets/login-bg.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,38 +24,38 @@ const Login = () => {
     setLoading(true);
     try {
       const response = await login(data);
-      
+
       if (response.status === 200 || response.status === 201) {
         const token = response.data?.token || response.data?.accessToken || response.data;
         const role = response.data?.role || response.data?.userRole || response.data?.authorities?.[0] || 'USER';
-        
+
         console.log("Login response:", response.data);
         console.log("Extracted token:", token);
         console.log("Extracted role:", role);
-        
+
         if (!token) {
           toast.error("No token received from server");
           return;
         }
-        
+
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
-        
+
         const isAdmin = role === 'ROLE_ADMIN' || role === 'ADMIN';
         toast.success(`Login Successful! Welcome ${isAdmin ? 'Admin' : 'User'}`);
-        
+
         // Redirect based on role
         if (isAdmin) {
           navigate("/dashboard");
         } else {
           navigate("/explore");
         }
-        
+
         setData({ email: "", password: "" });
       }
     } catch (error) {
       console.error("Login error:", error);
-      
+
       // Handle different error scenarios
       if (error?.response?.status === 403) {
         toast.error("Access forbidden. Please check your credentials and try again.");
@@ -102,7 +102,7 @@ const Login = () => {
                   className="form-control"
                   id="email"
                   name="email"
-                  placeholder="you@example.com"
+                  placeholder="kapilrajkc10@gmail.com"
                   value={data.email}
                   onChange={onChangeHandler}
                   required
@@ -133,6 +133,15 @@ const Login = () => {
                 </button>
               </div>
             </form>
+
+            <div className="text-center mt-3">
+              <p className="text-muted">
+                Don't have an account?{" "}
+                <Link to="/register" className="text-primary text-decoration-none">
+                  Sign Up
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>

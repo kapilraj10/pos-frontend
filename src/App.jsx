@@ -8,7 +8,7 @@ import ManageCategory from './pages/ManageCategory/ManageCategory'
 import ManageItems from './pages/ManageItems/ManageItems'
 import ManageUsers from './pages/ManageUsers/ManageUsers'
 import Login from './pages/Login/Login'
-import Register from './pages/Register/Register'
+import Register from './pages/Login/Register'
 import OrderHistory from './pages/OrderHistory/OrderHistory';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
