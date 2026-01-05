@@ -1,8 +1,8 @@
 .orders-history-container {
-    background: #0a0a0a;
+    background: #f8f9fa;
     padding: 16px;
     min-height: calc(100vh - 5rem);
-    color: #ffffff;
+    color: #1a202c;
 }
 
 .orders-header {
@@ -11,7 +11,7 @@
     align-items: center;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #1f1f1f;
+    border-bottom: 1px solid #e2e8f0;
     flex-wrap: wrap;
     gap: 12px;
 }
@@ -19,7 +19,7 @@
 .orders-title {
     font-size: 16px;
     font-weight: 600;
-    color: #ffffff;
+    color: #1a202c;
     margin: 0;
     display: flex;
     align-items: center;
@@ -39,13 +39,14 @@
 }
 
 .stat-card {
-    background: #111111;
-    border: 1px solid #1f1f1f;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
     padding: 12px;
     display: flex;
     align-items: center;
     gap: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .stat-icon {
@@ -56,7 +57,7 @@
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    background: #1f1f1f;
+    background: #f7fafc;
     color: #667eea;
 }
 
@@ -67,13 +68,13 @@
 .stat-value {
     font-size: 18px;
     font-weight: 600;
-    color: #ffffff;
+    color: #1a202c;
     margin: 0;
 }
 
 .stat-label {
     font-size: 11px;
-    color: #6b7280;
+    color: #718096;
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -103,10 +104,10 @@
 
 .search-input {
     width: 100%;
-    background: #111111;
-    border: 1px solid #222;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
-    color: #ffffff;
+    color: #1a202c;
     padding: 8px 12px 8px 34px;
     font-size: 13px;
     transition: border-color 0.2s;
@@ -115,10 +116,11 @@
 .search-input:focus {
     outline: none;
     border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .search-input::placeholder {
-    color: #4b5563;
+    color: #a0aec0;
 }
 
 .search-icon {
@@ -126,20 +128,20 @@
     left: 10px;
     top: 50%;
     transform: translateY(-50%);
-    color: #4b5563;
+    color: #a0aec0;
     font-size: 14px;
 }
 
 .filter-select {
-    background: #111111;
-    border: 1px solid #222;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
-    color: #ffffff;
+    color: #1a202c;
     padding: 8px 32px 8px 12px;
     font-size: 13px;
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%234b5563' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23718096' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 12px 10px;
@@ -149,13 +151,15 @@
 .filter-select:focus {
     outline: none;
     border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .orders-table-container {
-    background: #0d0d0d;
-    border: 1px solid #1f1f1f;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
     overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .orders-table {
@@ -165,27 +169,27 @@
 }
 
 .orders-table thead {
-    background: #111111;
+    background: #f7fafc;
 }
 
 .orders-table th {
-    color: #9ca3af;
-    font-weight: 500;
+    color: #4a5568;
+    font-weight: 600;
     font-size: 11px;
     text-align: left;
     padding: 10px 12px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid #1f1f1f;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .orders-table tbody tr {
-    border-bottom: 1px solid #1f1f1f;
+    border-bottom: 1px solid #e2e8f0;
     transition: background-color 0.2s;
 }
 
 .orders-table tbody tr:hover {
-    background: #111111;
+    background: #f7fafc;
 }
 
 .orders-table tbody tr:last-child {
@@ -194,7 +198,7 @@
 
 .orders-table td {
     padding: 10px 12px;
-    color: #e5e7eb;
+    color: #2d3748;
     font-size: 13px;
     vertical-align: middle;
 }
@@ -211,14 +215,14 @@
 }
 
 .customer-name {
-    color: #ffffff;
+    color: #1a202c;
     font-weight: 500;
     margin: 0 0 2px 0;
     font-size: 13px;
 }
 
 .customer-phone {
-    color: #6b7280;
+    color: #718096;
     font-size: 11px;
     margin: 0;
 }
@@ -226,7 +230,7 @@
 .items-cell {
     max-width: 200px;
     min-width: 150px;
-    color: #9ca3af;
+    color: #4a5568;
     font-size: 12px;
 }
 
@@ -242,7 +246,7 @@
 
 .date-cell {
     white-space: nowrap;
-    color: #6b7280;
+    color: #718096;
     font-size: 12px;
 }
 
@@ -333,7 +337,7 @@
 .loading-spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid #222;
+    border: 3px solid #e2e8f0;
     border-radius: 50%;
     border-top-color: #667eea;
     animation: spin 1s linear infinite;
@@ -346,7 +350,7 @@
 }
 
 .loading-text {
-    color: #6b7280;
+    color: #718096;
     font-size: 13px;
 }
 
@@ -363,18 +367,18 @@
 
 .empty-icon {
     font-size: 48px;
-    color: #333;
+    color: #cbd5e0;
 }
 
 .empty-title {
-    color: #9ca3af;
+    color: #4a5568;
     font-size: 14px;
     font-weight: 500;
     margin: 0;
 }
 
 .empty-subtitle {
-    color: #6b7280;
+    color: #718096;
     font-size: 12px;
     margin: 0;
     max-width: 280px;
@@ -407,16 +411,16 @@
 }
 
 .orders-table-container::-webkit-scrollbar-track {
-    background: #111111;
+    background: #f7fafc;
 }
 
 .orders-table-container::-webkit-scrollbar-thumb {
-    background: #333;
+    background: #cbd5e0;
     border-radius: 3px;
 }
 
 .orders-table-container::-webkit-scrollbar-thumb:hover {
-    background: #444;
+    background: #a0aec0;
 }
 
 /* Responsive Design */

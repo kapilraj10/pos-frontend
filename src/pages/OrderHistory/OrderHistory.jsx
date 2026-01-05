@@ -660,40 +660,6 @@ const OrderHistory = () => {
                 </div>
             </div>
 
-            {/* Footer Summary */}
-            {filteredOrders.length > 0 && (
-                <div style={{
-                    marginTop: '20px',
-                    padding: '16px',
-                    background: 'rgba(255,255,255,0.05)',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: '10px'
-                }}>
-                    <div style={{ color: '#a0aec0', fontSize: '14px' }}>
-                        Showing <strong>{filteredOrders.length}</strong> of <strong>{orders.length}</strong> orders
-                    </div>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <div style={{ fontSize: '14px', color: '#a0aec0' }}>
-                            Filtered Revenue: <strong style={{ color: '#48bb78' }}>
-                                रु {filteredOrders.reduce((sum, order) => sum + calculateGrandTotal(order), 0).toFixed(2)}
-                            </strong>
-                        </div>
-                        <button
-                            className="refresh-button"
-                            onClick={fetchOrders}
-                            style={{ padding: '8px 16px', fontSize: '13px' }}
-                        >
-                            <i className="bi bi-arrow-clockwise"></i>
-                            Refresh
-                        </button>
-                    </div>
-                </div>
-            )}
-
             {filteredOrders.length === 0 && searchTerm && (
                 <div style={{
                     textAlign: 'center',
