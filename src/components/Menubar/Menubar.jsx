@@ -6,7 +6,7 @@ import { AppContext } from '../../context/AppContext';
 
 const Menubar = () => {
   const navigate = useNavigate();
-  const {setAuthData} = useContext(AppContext);
+  const { setAuthData } = useContext(AppContext);
   const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
@@ -55,6 +55,16 @@ const Menubar = () => {
               Explore
             </Link>
           </li>
+
+          {/* Order History - For logged-in users */}
+          {isLoggedIn && (
+            <li className="nav-item">
+              <Link className="nav-link" to="/order-history">
+                My Orders
+              </Link>
+            </li>
+          )}
+
           {/* Dashboard - Only for ADMIN */}
           {isAdmin && (
             <li className="nav-item">
@@ -64,14 +74,14 @@ const Menubar = () => {
             </li>
           )}
 
-       
-          
+
+
 
           {/* Manage Items - Only for ADMIN */}
           {isAdmin && (
             <li className="nav-item">
               <Link className="nav-link" to="/manage-items">
-                Manage Items 
+                Manage Items
               </Link>
             </li>
           )}
@@ -89,58 +99,58 @@ const Menubar = () => {
           {isAdmin && (
             <li className="nav-item">
               <Link className="nav-link" to="/manage-users">
-                Manage Users 
+                Manage Users
               </Link>
             </li>
           )}
 
-        
+
         </ul>
 
-    {/* User profile dropdown or Login button */}
-<ul className="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-  {isLoggedIn ? (
-    <li className="nav-item dropdown">
-      <a
-        className="nav-link dropdown-toggle d-flex align-items-center"
-        id="navbarDropdown"
-        href="#!"
-        role="button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <img
-          src={assets?.profile}
-          alt="User avatar"
-          height={32}
-          width={32}
-          className="rounded-circle"
-        />
-      </a>
+        {/* User profile dropdown or Login button */}
+        <ul className="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+          {isLoggedIn ? (
+            <li className="nav-item dropdown">
+              <a
+                className="nav-link dropdown-toggle d-flex align-items-center"
+                id="navbarDropdown"
+                href="#!"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <img
+                  src={assets?.profile}
+                  alt="User avatar"
+                  height={32}
+                  width={32}
+                  className="rounded-circle"
+                />
+              </a>
 
-      <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-        <li>
-          <a className="dropdown-item" href="#!">Settings</a>
-        </li>
-        <li>
-          <a className="dropdown-item" href="#!">Activity Log</a>
-        </li>
-        <li>
-          <hr className="dropdown-divider" />
-        </li>
-        <li>
-          <button type="button" className="dropdown-item" onClick={logout}>Logout</button>
-        </li>
-      </ul>
-    </li>
-  ) : (
-    <li className="nav-item">
-      <Link className="nav-link btn btn-primary text-white px-3" to="/login">
-        Login
-      </Link>
-    </li>
-  )}
-</ul>
+              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li>
+                  <a className="dropdown-item" href="#!">Settings</a>
+                </li>
+                <li>
+                  <a className="dropdown-item" href="#!">Activity Log</a>
+                </li>
+                <li>
+                  <hr className="dropdown-divider" />
+                </li>
+                <li>
+                  <button type="button" className="dropdown-item" onClick={logout}>Logout</button>
+                </li>
+              </ul>
+            </li>
+          ) : (
+            <li className="nav-item">
+              <Link className="nav-link btn btn-primary text-white px-3" to="/login">
+                Login
+              </Link>
+            </li>
+          )}
+        </ul>
       </div>
     </nav>
   )

@@ -12,7 +12,7 @@ const getAuthHeader = () => {
 // Fetch latest orders
 export const latestOrders = async () => {
     try {
-    const response = await axios.get(`${BASE_URL}/orders/latest`, {
+        const response = await axios.get(`${BASE_URL}/orders/latest`, {
             headers: getAuthHeader()
         });
         return response.data;
@@ -30,7 +30,7 @@ export const createOrder = async (order) => {
     }
 
     try {
-    const response = await axios.post(`${BASE_URL}/orders`, order, {
+        const response = await axios.post(`${BASE_URL}/orders`, order, {
             headers: {
                 ...getAuthHeader(),
                 'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ export const createOrder = async (order) => {
 // Delete order
 export const deleteOrder = async (orderId) => {
     try {
-    const response = await axios.delete(`${BASE_URL}/orders/${orderId}`, {
+        const response = await axios.delete(`${BASE_URL}/orders/${orderId}`, {
             headers: getAuthHeader()
         });
         toast.success("Order deleted successfully!");
@@ -56,6 +56,36 @@ export const deleteOrder = async (orderId) => {
     } catch (error) {
         console.error("Error deleting order:", error);
         toast.error("Failed to delete order");
+        throw error;
+    }
+};
+
+// Get user's own orders
+export const getMyOrders = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/orders/my-orders`, {
+            headers: getAuthHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching my orders:", error);
+        throw error;
+    }
+};
+
+// Update order status (admin only)
+export const updateOrderStatus = async (orderId, status) => {
+    try {
+        const response = await axios.patch(
+            `${BASE_URL}/orders/${orderId}/status`,
+            { status },
+            { headers: getAuthHeader() }
+        );
+        toast.success("Order status updated!");
+        return response.data;
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        toast.error("Failed to update order status");
         throw error;
     }
 };

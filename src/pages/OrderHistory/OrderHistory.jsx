@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './OrderHistory.css';
-import { latestOrders } from '../../Service/OrderService.js';
+import { getMyOrders } from '../../Service/OrderService.js';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -8,6 +8,7 @@ const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
     const [paymentFilter, setPaymentFilter] = useState('all');
     const navigate = useNavigate();
 
@@ -20,12 +21,12 @@ const OrderHistory = () => {
             return;
         }
         try {
-            const response = await latestOrders();
+            const response = await getMyOrders();
             console.log("API response:", response);
 
             // Handle both direct array response and axios response
             const data = Array.isArray(response) ? response : (response?.data || []);
-            
+
             // Filter out invalid orders and ensure data integrity
             const validOrders = data
                 .filter(order => order && (order.orderId || order.customerName))
@@ -42,7 +43,7 @@ const OrderHistory = () => {
                     createdAt: order.createdAt || new Date().toISOString()
                 }))
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by latest first
-            
+
             setOrders(validOrders);
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -61,7 +62,7 @@ const OrderHistory = () => {
 
     useEffect(() => {
         fetchOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Helper function to calculate grand total
@@ -82,12 +83,12 @@ const OrderHistory = () => {
 
     const formatItems = (items = []) => {
         if (!Array.isArray(items) || items.length === 0) return "No items";
-        
+
         const itemCount = items.length;
         const firstItem = items[0];
         const firstName = firstItem?.name || `Product ${firstItem?.productId || "Unknown"}`;
         const firstQuantity = firstItem?.quantity || 0;
-        
+
         if (itemCount === 1) {
             return `${firstName} (x${firstQuantity})`;
         } else {
@@ -97,14 +98,14 @@ const OrderHistory = () => {
 
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
-        
+
         try {
             const date = new Date(dateString);
-            return isNaN(date.getTime()) 
-                ? "Invalid Date" 
+            return isNaN(date.getTime())
+                ? "Invalid Date"
                 : date.toLocaleDateString(undefined, {
-                    year: 'numeric', 
-                    month: 'short', 
+                    year: 'numeric',
+                    month: 'short',
                     day: 'numeric'
                 });
         } catch (err) {
@@ -115,13 +116,13 @@ const OrderHistory = () => {
 
     const formatTime = (dateString) => {
         if (!dateString) return "";
-        
+
         try {
             const date = new Date(dateString);
-            return isNaN(date.getTime()) 
-                ? "" 
+            return isNaN(date.getTime())
+                ? ""
                 : date.toLocaleTimeString(undefined, {
-                    hour: '2-digit', 
+                    hour: '2-digit',
                     minute: '2-digit'
                 });
         } catch {
@@ -132,9 +133,9 @@ const OrderHistory = () => {
     const getPaymentBadgeClass = (method) => {
         const normalized = (method || '').toUpperCase();
         if (normalized === 'CASH') return 'payment-badge payment-cash';
-        if (normalized === 'CARD' || normalized === 'CREDIT_CARD' || normalized === 'DEBIT_CARD') 
+        if (normalized === 'CARD' || normalized === 'CREDIT_CARD' || normalized === 'DEBIT_CARD')
             return 'payment-badge payment-card';
-        if (normalized === 'ONLINE' || normalized === 'DIGITAL' || normalized === 'UPI') 
+        if (normalized === 'ONLINE' || normalized === 'DIGITAL' || normalized === 'UPI')
             return 'payment-badge payment-online';
         return 'payment-badge payment-unknown';
     };
@@ -143,21 +144,99 @@ const OrderHistory = () => {
         const normalized = (status || '').toUpperCase();
         if (normalized === 'COMPLETED' || normalized === 'DELIVERED') return 'order-status status-completed';
         if (normalized === 'PENDING' || normalized === 'PROCESSING') return 'order-status status-processing';
+        if (normalized === 'READY') return 'order-status status-ready';
         if (normalized === 'CANCELLED' || normalized === 'FAILED') return 'order-status status-cancelled';
         return 'order-status status-processing';
     };
 
-    // Filter orders based on search and payment filter
+    // Print receipt function
+    const printReceipt = (order) => {
+        const printWindow = window.open('', '', 'height=600,width=400');
+        printWindow.document.write('<html><head><title>Receipt - ' + order.orderId + '</title>');
+        printWindow.document.write('<style>');
+        printWindow.document.write(`
+            body { font-family: 'Courier New', monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
+            .receipt-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 15px; }
+            .receipt-header h2 { margin: 5px 0; font-size: 20px; }
+            .receipt-header p { margin: 2px 0; font-size: 12px; }
+            .order-info { margin-bottom: 15px; font-size: 12px; }
+            .order-info p { margin: 3px 0; }
+            .items-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+            .items-table th { text-align: left; border-bottom: 1px solid #000; padding: 5px 0; font-size: 11px; }
+            .items-table td { padding: 5px 0; font-size: 11px; }
+            .totals { border-top: 1px solid #000; padding-top: 10px; margin-top: 10px; }
+            .totals p { display: flex; justify-content: space-between; margin: 5px 0; font-size: 12px; }
+            .grand-total { font-size: 14px; font-weight: bold; border-top: 2px solid #000; padding-top: 10px; }
+            .footer { text-align: center; margin-top: 20px; border-top: 2px dashed #000; padding-top: 10px; font-size: 11px; }
+            @media print { body { padding: 0; } }
+        `);
+        printWindow.document.write('</style></head><body>');
+
+        // Receipt Header
+        printWindow.document.write('<div class="receipt-header">');
+        printWindow.document.write('<h2>POS SYSTEM</h2>');
+        printWindow.document.write('<p>Order Receipt</p>');
+        printWindow.document.write('</div>');
+
+        // Order Info
+        printWindow.document.write('<div class="order-info">');
+        printWindow.document.write('<p><strong>Order ID:</strong> ' + order.orderId + '</p>');
+        printWindow.document.write('<p><strong>Customer:</strong> ' + order.customerName + '</p>');
+        printWindow.document.write('<p><strong>Phone:</strong> ' + order.phoneNumber + '</p>');
+        printWindow.document.write('<p><strong>Date:</strong> ' + formatDate(order.createdAt) + ' ' + formatTime(order.createdAt) + '</p>');
+        printWindow.document.write('<p><strong>Status:</strong> ' + (order.status || 'PENDING') + '</p>');
+        printWindow.document.write('<p><strong>Payment:</strong> ' + order.paymentMethod + '</p>');
+        printWindow.document.write('</div>');
+
+        // Items Table
+        printWindow.document.write('<table class="items-table">');
+        printWindow.document.write('<thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>');
+        printWindow.document.write('<tbody>');
+
+        (order.items || []).forEach(item => {
+            const itemTotal = (item.price || 0) * (item.quantity || 0);
+            printWindow.document.write('<tr>');
+            printWindow.document.write('<td>' + item.name + '</td>');
+            printWindow.document.write('<td>' + item.quantity + '</td>');
+            printWindow.document.write('<td>Rs. ' + (item.price || 0).toFixed(2) + '</td>');
+            printWindow.document.write('<td>Rs. ' + itemTotal.toFixed(2) + '</td>');
+            printWindow.document.write('</tr>');
+        });
+
+        printWindow.document.write('</tbody></table>');
+
+        // Totals
+        printWindow.document.write('<div class="totals">');
+        printWindow.document.write('<p><span>Subtotal:</span><span>Rs. ' + (order.subtotal || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('<p><span>Tax:</span><span>Rs. ' + (order.tax || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('<p class="grand-total"><span>Grand Total:</span><span>Rs. ' + (order.grandTotal || 0).toFixed(2) + '</span></p>');
+        printWindow.document.write('</div>');
+
+        // Footer
+        printWindow.document.write('<div class="footer">');
+        printWindow.document.write('<p>Thank you for your order!</p>');
+        printWindow.document.write('<p>Visit again soon</p>');
+        printWindow.document.write('</div>');
+
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    };
+
+    // Filter orders based on search, status, and payment filter
     const filteredOrders = orders.filter(order => {
-        const matchesSearch = searchTerm === '' || 
+        const matchesSearch = searchTerm === '' ||
             order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
             order.phoneNumber.includes(searchTerm);
-        
-        const matchesPayment = paymentFilter === 'all' || 
+
+        const matchesStatus = statusFilter === 'all' ||
+            (order.status || 'PENDING').toLowerCase() === statusFilter.toLowerCase();
+
+        const matchesPayment = paymentFilter === 'all' ||
             order.paymentMethod.toLowerCase() === paymentFilter.toLowerCase();
-        
-        return matchesSearch && matchesPayment;
+
+        return matchesSearch && matchesStatus && matchesPayment;
     });
 
     if (loading) {
@@ -213,15 +292,28 @@ const OrderHistory = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <select 
+                    <select
                         className="filter-select"
                         value={paymentFilter}
                         onChange={(e) => setPaymentFilter(e.target.value)}
                     >
                         <option value="all">All Payment Methods</option>
                         <option value="cash">Cash</option>
+                        <option value="khalti">Khalti</option>
                         <option value="card">Card</option>
                         <option value="online">Online</option>
+                    </select>
+                    <select
+                        className="filter-select"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="ready">Ready</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
             </div>
@@ -241,7 +333,7 @@ const OrderHistory = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="stat-card">
                     <div className="stat-icon">
                         <i className="bi bi-currency-rupee"></i>
@@ -255,7 +347,7 @@ const OrderHistory = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="stat-card">
                     <div className="stat-icon">
                         <i className="bi bi-cash"></i>
@@ -269,7 +361,7 @@ const OrderHistory = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="stat-card">
                     <div className="stat-icon">
                         <i className="bi bi-cart-check"></i>
@@ -298,6 +390,7 @@ const OrderHistory = () => {
                                 <th>Payment</th>
                                 <th>Status</th>
                                 <th>Date & Time</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -352,6 +445,15 @@ const OrderHistory = () => {
                                             {formatTime(order.createdAt)}
                                         </div>
                                     </td>
+                                    <td className="actions-cell">
+                                        <button
+                                            className="btn btn-sm btn-primary"
+                                            onClick={() => printReceipt(order)}
+                                            title="Print Receipt"
+                                        >
+                                            <i className="bi bi-printer"></i> Print
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -361,10 +463,10 @@ const OrderHistory = () => {
 
             {/* Footer Summary */}
             {filteredOrders.length > 0 && (
-                <div style={{ 
-                    marginTop: '20px', 
-                    padding: '16px', 
-                    background: 'rgba(255,255,255,0.05)', 
+                <div style={{
+                    marginTop: '20px',
+                    padding: '16px',
+                    background: 'rgba(255,255,255,0.05)',
                     borderRadius: '8px',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -381,7 +483,7 @@ const OrderHistory = () => {
                                 रु {filteredOrders.reduce((sum, order) => sum + calculateGrandTotal(order), 0).toFixed(2)}
                             </strong>
                         </div>
-                        <button 
+                        <button
                             className="refresh-button"
                             onClick={fetchOrders}
                             style={{ padding: '8px 16px', fontSize: '13px' }}
@@ -394,9 +496,9 @@ const OrderHistory = () => {
             )}
 
             {filteredOrders.length === 0 && searchTerm && (
-                <div style={{ 
-                    textAlign: 'center', 
-                    padding: '40px', 
+                <div style={{
+                    textAlign: 'center',
+                    padding: '40px',
                     color: '#a0aec0',
                     background: 'rgba(255,255,255,0.05)',
                     borderRadius: '8px',
@@ -405,7 +507,7 @@ const OrderHistory = () => {
                     <i className="bi bi-search" style={{ fontSize: '32px', marginBottom: '16px', display: 'block' }}></i>
                     <h4 style={{ marginBottom: '8px' }}>No matching orders found</h4>
                     <p>Try adjusting your search or filter criteria</p>
-                    <button 
+                    <button
                         style={{
                             background: 'transparent',
                             border: '1px solid #4a5568',

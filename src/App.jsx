@@ -9,9 +9,9 @@ import ManageItems from './pages/ManageItems/ManageItems'
 import ManageUsers from './pages/ManageUsers/ManageUsers'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
+import OrderHistory from './pages/OrderHistory/OrderHistory';
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-// import OrderHistory from './pages/OrderHistory/OrderHistory';
 import PaymentCallback from './pages/PaymentCallback/PaymentCallback';
 
 // Protected Route Component for Admin only
@@ -138,6 +138,16 @@ const App = () => {
         <Route
           path="/explore"
           element={<Explore />}
+        />
+
+        {/* Protected route - Order History for logged-in users */}
+        <Route
+          path="/order-history"
+          element={
+            <ProtectedRoute>
+              <OrderHistory />
+            </ProtectedRoute>
+          }
         />
 
         {/* Khalti return callback */}
