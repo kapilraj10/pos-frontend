@@ -12,6 +12,7 @@ import {
   addItem as addItemApi,
   updateItem as updateItemApi,
   purchaseItem as purchaseItemApi,
+  returnItem as returnItemApi,
 } from "../Service/ItemService";
 
 export const AppContext = createContext(null);
@@ -119,6 +120,20 @@ export const AppProvider = ({ children }) => {
   }
 
   const removeFromCart = (itemId) => {
+    const item = cartItems.find(ci => String(ci.id) === String(itemId));
+    if (item) {
+      // Return the full quantity back to stock
+      (async () => {
+        try {
+          await returnItemApi(itemId, item.quantity);
+          const res = await fetchItems();
+          setItems((res.data || []).map(normalizeItem));
+        } catch (err) {
+          console.error('Failed to return stock on remove:', err);
+          toast.error(err?.response?.data?.message || 'Failed to restore stock');
+        }
+      })();
+    }
     setCartItems(cartItems.filter(cartItem => cartItem.id !== itemId));
   }
 
@@ -195,7 +210,24 @@ export const AppProvider = ({ children }) => {
       return;
     }
 
-    // If decreasing or unchanged, just update quantity locally
+    // If decreasing quantity, return the difference back to stock
+    if (newQuantity < item.quantity) {
+      const delta = item.quantity - newQuantity;
+      (async () => {
+        try {
+          await returnItemApi(itemId, delta);
+          const res = await fetchItems();
+          setItems((res.data || []).map(normalizeItem));
+          setCartItems(cartItems.map(cartItem => cartItem.id === itemId ? { ...cartItem, quantity: newQuantity } : cartItem));
+        } catch (err) {
+          console.error('Failed to return stock on quantity decrease:', err);
+          toast.error(err?.response?.data?.message || 'Failed to restore stock');
+        }
+      })();
+      return;
+    }
+
+    // If unchanged, just update quantity locally
     setCartItems(cartItems.map(cartItem => cartItem.id === itemId ? { ...cartItem, quantity: newQuantity } : cartItem));
   };
 

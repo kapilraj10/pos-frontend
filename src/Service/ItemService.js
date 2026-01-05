@@ -47,6 +47,14 @@ export const purchaseItem = async (itemId, quantity = 1) => {
     headers: getAuthHeaders()
   });
 };
+
+// Return stock (increment stock) - public endpoint
+export const returnItem = async (itemId, quantity = 1) => {
+  return await axios.post(`${BASE_URL}/items/${itemId}/return`, { quantity }, {
+    headers: getAuthHeaders()
+  });
+};
+
 // Delete item
 export const deleteItem = async (itemId) => {
   return await axios.delete(`${BASE_URL}/admin/items/${itemId}`, {

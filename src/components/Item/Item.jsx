@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { AppContext } from '../../context/AppContext';
 
 const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, stock = 0, dark = true, showCartControls = false }) => {
-  const { addToCart, removeFromCart, cartItems } = useContext(AppContext);
+  const { addToCart, removeFromCart, updateQuantity, cartItems } = useContext(AppContext);
 
   // Check if item is in cart
   const itemInCart = cartItems?.find(cartItem => String(cartItem.id) === String(itemId));
@@ -27,16 +27,10 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, stock = 0,
 
   const handleRemoveFromCart = () => {
     if (quantityInCart > 1) {
-      // Reduce quantity by 1
-      addToCart({
-        name: itemName,
-        imgUrl: itemImage,
-        price: itemPrice,
-        id: itemId,
-        quantity: quantityInCart - 1
-      });
+      // Decrease quantity by exactly 1 using updateQuantity
+      updateQuantity(itemId, quantityInCart - 1);
     } else {
-      // Remove completely
+      // Remove completely when quantity would reach 0
       removeFromCart(itemId);
     }
   };
@@ -368,7 +362,6 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, stock = 0,
 
   // Regular Item View (Product Card)
   const isOutOfStock = stock != null && stock <= 0;
-  const isLowStock = stock != null && stock <= 5 && stock > 0;
 
   return (
     <div
@@ -405,9 +398,9 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, stock = 0,
             Out of stock
           </div>
         )}
-        {isLowStock && (
-          <div style={{ position: 'absolute', top: 10, left: 10, background: '#f59e0b', color: 'white', padding: '4px 8px', borderRadius: 6, fontSize: 12, zIndex: 3 }}>
-            Low stock
+        {!isOutOfStock && stock != null && stock > 0 && (
+          <div style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(16, 185, 129, 0.9)', color: 'white', padding: '4px 10px', borderRadius: 6, fontSize: 13, fontWeight: '700', zIndex: 3 }}>
+            {stock}
           </div>
         )}
       </div>
@@ -460,7 +453,7 @@ const Item = ({ itemName, itemImage, itemPrice, itemId, paymentTypes, stock = 0,
             >
               <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
             </svg>
-            {isOutOfStock ? 'Out of stock' : (isLowStock ? 'Low stock' : (quantityInCart > 0 ? 'Add More' : 'Add to Cart'))}
+            {isOutOfStock ? 'Out of stock' : (quantityInCart > 0 ? 'Add More' : 'Add to Cart')}
           </button>
         </div>
       </div>

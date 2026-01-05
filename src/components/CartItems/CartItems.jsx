@@ -28,8 +28,13 @@ const CartItems = () => {
                 <div className='d-flex align-items-center gap-2'>
                   <button
                     className='btn btn-danger btn-sm'
-                    disabled={item.quantity === 1}
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    onClick={() => {
+                      if (item.quantity > 1) {
+                        updateQuantity(item.id, item.quantity - 1);
+                      } else {
+                        removeFromCart(item.id);
+                      }
+                    }}
                   >
                     <i className='bi bi-dash'></i>
                   </button>
