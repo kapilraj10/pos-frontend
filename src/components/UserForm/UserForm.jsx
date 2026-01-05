@@ -5,7 +5,6 @@ import "./UserForm.css";
 
 const UserForm = ({ setUsers }) => {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -60,65 +59,40 @@ const UserForm = ({ setUsers }) => {
             {/* Name */}
             <div className="col-12">
               <label className="form-label">Full Name</label>
-              <div className="input-group">
-                <span className="input-group-text bg-white">
-                  <i className="bi bi-person text-muted"></i>
-                </span>
-                <input
-                  type="text"
-                  name="name"
-                  className="form-control"
-                  placeholder="John Doe"
-                  value={data.name}
-                  onChange={onChangeHandler}
-                />
-              </div>
+              <input
+                type="text"
+                name="name"
+                className="form-control"
+                placeholder="John Doe"
+                value={data.name}
+                onChange={onChangeHandler}
+              />
             </div>
 
             {/* Email */}
             <div className="col-12">
               <label className="form-label">Email Address</label>
-              <div className="input-group">
-                <span className="input-group-text bg-white">
-                  <i className="bi bi-envelope text-muted"></i>
-                </span>
-                <input
-                  type="email"
-                  name="email"
-                  className="form-control"
-                  placeholder="john@example.com"
-                  value={data.email}
-                  onChange={onChangeHandler}
-                />
-              </div>
+              <input
+                type="email"
+                name="email"
+                className="form-control"
+                placeholder="john@example.com"
+                value={data.email}
+                onChange={onChangeHandler}
+              />
             </div>
 
             {/* Password */}
             <div className="col-12">
               <label className="form-label">Password</label>
-              <div className="input-group">
-                <span className="input-group-text bg-white">
-                  <i className="bi bi-lock text-muted"></i>
-                </span>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  className="form-control"
-                  placeholder="******"
-                  value={data.password}
-                  onChange={onChangeHandler}
-                />
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  <i
-                    className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"
-                      }`}
-                  ></i>
-                </button>
-              </div>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                placeholder="******"
+                value={data.password}
+                onChange={onChangeHandler}
+              />
               <small className="text-muted">
                 Minimum 6 characters
               </small>

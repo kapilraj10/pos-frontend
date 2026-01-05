@@ -1,0 +1,28 @@
+/* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Main Content Wrapper */
+.main-content {
+    margin-top: 56px;
+    min-height: calc(100vh - 56px);
+}
+
+/* Admin Layout */
+.admin-layout {
+    margin-left: 260px;
+    margin-top: 56px;
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - 56px);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .admin-layout {
+        margin-left: 0;
+        margin-top: 56px;
+    }
+}

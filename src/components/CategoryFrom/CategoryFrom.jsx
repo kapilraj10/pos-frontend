@@ -44,8 +44,9 @@ const CategoryForm = () => {
         setData({ name: "", description: "", bgColor: "#000000" });
         setImageFile(null);
       }
-    } catch (err) {
-      toast.error("Something went wrong");
+    } catch (error) {
+      console.error("Error adding category:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }

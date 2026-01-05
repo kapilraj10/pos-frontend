@@ -40,6 +40,7 @@ const Login = () => {
 
         localStorage.setItem("token", token);
         localStorage.setItem("role", role);
+        localStorage.setItem("email", data.email);
 
         const isAdmin = role === 'ROLE_ADMIN' || role === 'ADMIN';
         toast.success(`Login Successful! Welcome ${isAdmin ? 'Admin' : 'User'}`);

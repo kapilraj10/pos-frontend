@@ -4,35 +4,35 @@
     padding: 20px;
     height: calc(100vh - 5rem);
     box-sizing: border-box;
-    background-color: #1a1e1f;
-    color: #f8f9fa;
+    background-color: #f8f9fa;
+    color: #212529;
 }
 
 .left-column {
     flex: 0.4;
-    border: 1px solid #2d3748;
+    border: 1px solid #dee2e6;
     border-radius: 12px;
     padding: 20px;
     height: 100%;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    background: linear-gradient(145deg, #2a2f31, #24292b);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow-y: auto;
 }
 
 .right-column {
     flex: 0.6;
-    border: 1px solid #2d3748;
+    border: 1px solid #dee2e6;
     border-radius: 12px;
     padding: 20px;
     height: 100%;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    background: linear-gradient(145deg, #2a2f31, #24292b);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     overflow-y: auto;
 }
 
@@ -43,8 +43,9 @@
         height: auto;
         min-height: calc(100vh - 5rem);
     }
-    
-    .left-column, .right-column {
+
+    .left-column,
+    .right-column {
         flex: none;
         height: auto;
         min-height: 500px;
@@ -57,8 +58,9 @@
         padding: 12px;
         gap: 15px;
     }
-    
-    .left-column, .right-column {
+
+    .left-column,
+    .right-column {
         padding: 16px;
     }
 }
@@ -71,17 +73,83 @@
 
 .left-column::-webkit-scrollbar-track,
 .right-column::-webkit-scrollbar-track {
-    background: #2a2f31;
+    background: #f8f9fa;
     border-radius: 3px;
 }
 
 .left-column::-webkit-scrollbar-thumb,
 .right-column::-webkit-scrollbar-thumb {
-    background: #4a5568;
+    background: #ced4da;
     border-radius: 3px;
 }
 
 .left-column::-webkit-scrollbar-thumb:hover,
 .right-column::-webkit-scrollbar-thumb:hover {
-    background: #5d6b83;
+    background: #adb5bd;
+}
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6c757d;
+}
+
+.spinner-large {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #e9ecef;
+    border-top: 4px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    margin-top: 16px;
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+/* Delete User Styling */
+.delete-user-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6c757d;
+}
+
+.delete-user-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.delete-user-button:hover {
+    background-color: #c82333;
+}
+
+.delete-user-message {
+    margin-top: 10px;
+    font-size: 0.875rem;
+    color: #495057;
 }

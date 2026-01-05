@@ -44,14 +44,24 @@ const UserList = ({ users = [], setUsers }) => {
     setPage(1);
   }, [search, pageSize]);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, userRole) => {
+    // Prevent deletion of admin users
+    if (userRole === "ROLE_ADMIN") {
+      toast.warning("Admin users cannot be deleted");
+      return;
+    }
+
     try {
       setLoadingId(id);
       await deleteUser(id);
-      setUsers(prev => prev.filter(u => u.id !== id));
+      setUsers(prev => prev.filter(u => u.userId !== id));
       toast.success("User deleted successfully");
-    } catch {
-      toast.error("Failed to delete user");
+    } catch (err) {
+      if (err.response?.status === 403) {
+        toast.error("Cannot delete admin user");
+      } else {
+        toast.error("Failed to delete user");
+      }
     } finally {
       setLoadingId(null);
     }
@@ -169,7 +179,7 @@ const UserList = ({ users = [], setUsers }) => {
                   )}
 
                   {pagedUsers.map(user => (
-                    <tr key={user.id}>
+                    <tr key={user.userId}>
                       <td className="ps-4">
                         <div className="d-flex align-items-center gap-3">
                           <div className="avatar-circle avatar-lg" style={{ backgroundColor: user.role === "ROLE_ADMIN" ? "#343a40" : "#6c757d" }}>
@@ -177,7 +187,7 @@ const UserList = ({ users = [], setUsers }) => {
                           </div>
                           <div className="user-meta">
                             <div className="user-name">{user.name || "Unnamed User"}</div>
-                            <small className="text-muted id-meta">ID: {String(user.id ?? '').substring(0, 8)}{user.id ? '...' : ''}</small>
+                            <small className="text-muted id-meta">ID: {String(user.userId ?? '').substring(0, 8)}{user.userId ? '...' : ''}</small>
                           </div>
                         </div>
                       </td>
@@ -193,24 +203,27 @@ const UserList = ({ users = [], setUsers }) => {
                       </td>
 
                       <td className="text-end pe-4">
-                        <button
-                          className="btn btn-sm btn-outline-danger delete-btn"
-                          onClick={() => handleDelete(user.id)}
-                          disabled={loadingId === user.id}
-                          aria-label={`Delete ${user.name || 'user'}`}
-                        >
-                          {loadingId === user.id ? (
-                            <>
-                              <span className="spinner-border spinner-border-sm me-1" role="status"></span>
-                              Deleting
-                            </>
-                          ) : (
-                            <>
-                              <i className="bi bi-trash me-1"></i>
-                              Delete
-                            </>
-                          )}
-                        </button>
+                        {user.role !== "ROLE_ADMIN" && (
+                          <button
+                            className="btn btn-sm btn-outline-danger delete-btn"
+                            onClick={() => handleDelete(user.userId, user.role)}
+                            disabled={loadingId === user.userId}
+                            title="Delete user"
+                            aria-label={`Delete ${user.name || 'user'}`}
+                          >
+                            {loadingId === user.userId ? (
+                              <>
+                                <span className="spinner-border spinner-border-sm me-1" role="status"></span>
+                                Deleting
+                              </>
+                            ) : (
+                              <>
+                                <i className="bi bi-trash me-1"></i>
+                                Delete
+                              </>
+                            )}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -221,7 +234,7 @@ const UserList = ({ users = [], setUsers }) => {
             {/* Mobile card list (visible on small screens) */}
             <div className="user-cards mt-3">
               {pagedUsers.map((user, idx) => (
-                <div className="user-card" key={user.id ?? idx}>
+                <div className="user-card" key={user.userId ?? idx}>
                   <div className="left">
                     <div
                       className="avatar-circle"
@@ -236,10 +249,23 @@ const UserList = ({ users = [], setUsers }) => {
                   </div>
                   <div className="right d-flex align-items-center gap-2">
                     <span className={`role-badge ${user.role === 'ROLE_ADMIN' ? 'admin' : 'user'}`}>{user.role === 'ROLE_ADMIN' ? 'Admin' : 'User'}</span>
-                    <button className="btn btn-sm btn-outline-danger action-btn" onClick={() => handleDelete(user.id)}>
-                      <i className="bi bi-trash me-1"></i>
-                      Delete
-                    </button>
+                    {user.role !== "ROLE_ADMIN" && (
+                      <button
+                        className="btn btn-sm btn-outline-danger action-btn"
+                        onClick={() => handleDelete(user.userId, user.role)}
+                        disabled={loadingId === user.userId}
+                        title="Delete user"
+                      >
+                        {loadingId === user.userId ? (
+                          <span className="spinner-border spinner-border-sm"></span>
+                        ) : (
+                          <>
+                            <i className="bi bi-trash me-1"></i>
+                            Delete
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

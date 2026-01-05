@@ -1,31 +1,188 @@
-/* Scoped layout fixes for ItemsList component */
-.items-list .card {
-    width: 100% !important;
-    max-width: none !important;
+/* ItemsList Component Styles */
+
+/* Container */
+.items-list {
+    width: 100%;
+    background: #f8f9fa;
 }
 
+.items-list .container-fluid {
+    max-width: 100%;
+}
+
+/* Header */
+.items-list h2 {
+    color: #111827;
+}
+
+.items-list .text-muted {
+    color: #6b7280;
+}
+
+/* Search Input */
+.items-list .input-group {
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.items-list .input-group .form-control {
+    border: none;
+    padding: 0.625rem 0.75rem;
+}
+
+.items-list .input-group .form-control:focus {
+    box-shadow: none;
+}
+
+.items-list .input-group-text {
+    border: none;
+    padding: 0.625rem 0.75rem;
+}
+
+/* Stats Cards */
+.items-list .card {
+    width: 100%;
+    max-width: none;
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.items-list .card:hover {
+    transform: translateY(-2px);
+}
+
+.items-list .card-body {
+    padding: 1.25rem;
+}
+
+/* Table */
 .items-list .table-responsive {
-    display: block !important;
-    width: 100% !important;
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 10px;
 }
 
 .items-list table {
-    width: 100% !important;
+    width: 100%;
     table-layout: auto;
-    /* allow proportional column sizing */
+    margin-bottom: 0;
 }
 
-/* Ensure row/columns inside this component don't collapse when inside flex containers */
-.items-list .row,
-.items-list .content {
-    width: 100% !important;
+.items-list thead {
+    background: #f9fafb;
 }
 
-.items-list .row>[class*="col-"] {
-    display: block;
+.items-list thead th {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    padding: 1rem;
+    border-bottom: 2px solid #e5e7eb;
 }
 
-/* Optional: make description cell flexible so columns resize proportionally */
-.items-list td.text-truncate {
-    max-width: none !important;
+.items-list tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.items-list tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Item Image/Avatar */
+.items-list .item-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.items-list .item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #e9ecef;
+    flex-shrink: 0;
+}
+
+/* Category Badge */
+.items-list .badge {
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.items-list .btn {
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.items-list .btn-sm {
+    padding: 0.375rem 0.75rem;
+}
+
+.items-list .btn-outline-primary:hover {
+    transform: translateY(-1px);
+}
+
+.items-list .btn-outline-danger:hover {
+    transform: translateY(-1px);
+}
+
+/* Empty State */
+.items-list .text-center i {
+    opacity: 0.5;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+
+    .items-list thead th,
+    .items-list tbody td {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .items-list .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .items-list .card-body {
+        padding: 1rem;
+    }
+
+    .items-list thead th,
+    .items-list tbody td {
+        padding: 0.625rem;
+        font-size: 0.875rem;
+    }
+
+    .items-list .item-avatar,
+    .items-list .item-image {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .items-list .py-4 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+
+    .items-list .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8125rem;
+    }
 }
