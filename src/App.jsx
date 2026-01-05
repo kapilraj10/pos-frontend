@@ -2,7 +2,7 @@ import React from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import Menubar from './components/Menubar/Menubar'
 import RoleIndicator from './components/RoleIndicator/RoleIndicator'
-import Dashboard from './pages/Dashboard/Dashboard'
+import AdminDashboard from './pages/Dashboard/AdminDashboard'
 import Explore from './pages/Explore/Explore'
 import ManageCategory from './pages/ManageCategory/ManageCategory'
 import ManageItems from './pages/ManageItems/ManageItems'
@@ -105,7 +105,7 @@ const App = () => {
           path="/dashboard"
           element={
             <AdminRoute>
-              <Dashboard />
+              <AdminDashboard />
             </AdminRoute>
           }
         />

@@ -164,19 +164,19 @@ const ItemsList = () => {
               <table className="table table-hover align-middle mb-0 w-100">
                 <thead className="table-light">
                   <tr>
-                    <th className="ps-4">Item</th>
-                    <th>Category</th>
-                    <th>Stock</th>
-                    <th>Price</th>
-                    <th className="d-none d-md-table-cell">Description</th>
-                    <th className="text-end pe-4">Action</th>
+                    <th className="ps-4" style={{ minWidth: '250px' }}>Item</th>
+                    <th style={{ minWidth: '120px' }}>Category</th>
+                    <th style={{ minWidth: '100px' }}>Stock</th>
+                    <th style={{ minWidth: '100px' }}>Price</th>
+                    <th className="d-none d-lg-table-cell" style={{ minWidth: '200px' }}>Description</th>
+                    <th className="text-end pe-4" style={{ minWidth: '180px' }}>Actions</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {filteredItems.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="text-center py-5">
+                      <td colSpan="6" className="text-center py-5">
                         <div className="py-4">
                           <i className="bi bi-box text-muted" style={{ fontSize: "3rem" }}></i>
                           <p className="text-muted mt-3 mb-0">
@@ -196,62 +196,109 @@ const ItemsList = () => {
                   ) : (
                     filteredItems.map(item => (
                       <tr key={item.id} className="align-middle">
-                        <td className="ps-4">
-                          <div className="d-flex align-items-center gap-2">
+                        <td className="ps-4 py-3">
+                          <div className="d-flex align-items-center gap-3">
+                            {item.imgUrl ? (
+                              <img
+                                src={item.imgUrl}
+                                alt={item.name}
+                                className="rounded"
+                                style={{
+                                  width: '50px',
+                                  height: '50px',
+                                  objectFit: 'cover',
+                                  border: '2px solid #e9ecef'
+                                }}
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextElementSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
                             <div
-                              className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+                              className="rounded d-flex align-items-center justify-content-center fw-bold text-white"
                               style={{
-                                width: 36,
-                                height: 36,
+                                width: 50,
+                                height: 50,
                                 backgroundColor: getCategoryColor(item.categoryId),
-                                fontSize: "0.875rem"
+                                fontSize: "1.25rem",
+                                display: item.imgUrl ? 'none' : 'flex'
                               }}
                             >
                               {item.name?.[0]?.toUpperCase() || "I"}
                             </div>
-                            <div>
-                              <div className="fw-semibold">{item.name}</div>
-                              <small className="text-muted d-block d-md-none">
-                                {item.description ? item.description.substring(0, 30) + "..." : "No description"}
+                            <div className="flex-grow-1">
+                              <div className="fw-semibold text-dark mb-1" style={{ fontSize: '0.95rem' }}>
+                                {item.name}
+                              </div>
+                              <small className="text-muted d-block d-lg-none">
+                                {item.description ?
+                                  (item.description.length > 40 ? item.description.substring(0, 40) + "..." : item.description)
+                                  : "No description"}
                               </small>
                             </div>
                           </div>
                         </td>
 
-                        <td>
+                        <td className="py-3">
                           <span
-                            className="badge px-2 py-1"
+                            className="badge px-3 py-2"
                             style={{
                               backgroundColor: getCategoryColor(item.categoryId),
-                              color: "white"
+                              color: "white",
+                              fontSize: '0.75rem',
+                              fontWeight: '500'
                             }}
                           >
                             {getCategoryName(item.categoryId)}
                           </span>
                         </td>
 
-                        <td>
-                          <span className="badge bg-secondary me-2">{item.stock ?? 0}</span>
+                        <td className="py-3">
+                          <span
+                            className={`badge px-3 py-2 ${(item.stock ?? 0) === 0 ? 'bg-danger' :
+                                (item.stock ?? 0) <= 5 ? 'bg-warning text-dark' :
+                                  'bg-success'
+                              }`}
+                            style={{ fontSize: '0.8rem', fontWeight: '600' }}
+                          >
+                            {item.stock ?? 0}
+                            <i className={`bi ${(item.stock ?? 0) === 0 ? 'bi-x-circle' :
+                                (item.stock ?? 0) <= 5 ? 'bi-exclamation-triangle' :
+                                  'bi-check-circle'
+                              } ms-1`}></i>
+                          </span>
                         </td>
 
-                        <td>
-                          <span className="fw-bold text-success">
+                        <td className="py-3">
+                          <span className="fw-bold text-success" style={{ fontSize: '0.95rem' }}>
                             रु {Number(item.price).toFixed(2)}
                           </span>
                         </td>
 
-                        <td className="d-none d-md-table-cell">
-                          <div className="text-truncate">
+                        <td className="d-none d-lg-table-cell py-3">
+                          <div
+                            className="text-muted"
+                            style={{
+                              maxWidth: '250px',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              fontSize: '0.875rem'
+                            }}
+                            title={item.description}
+                          >
                             {item.description || (
-                              <span className="text-muted fst-italic">No description</span>
+                              <span className="fst-italic">No description</span>
                             )}
                           </div>
                         </td>
 
-                        <td className="text-end pe-4">
+                        <td className="text-end pe-4 py-3">
                           <div className="d-flex justify-content-end gap-2">
                             <button
-                              className="btn btn-sm btn-outline-primary"
+                              className="btn btn-sm btn-outline-primary px-3"
+                              style={{ fontSize: '0.85rem' }}
                               onClick={() => {
                                 setEditForm({
                                   id: item.id,
@@ -265,17 +312,20 @@ const ItemsList = () => {
                                 setSelectedItem(null);
                                 setEditItem(item);
                               }}
+                              title="Edit item"
                             >
-                              <i className="bi bi-pencil me-1"></i>
-                              <span className="d-none d-md-inline">Edit</span>
+                              <i className="bi bi-pencil-square me-1"></i>
+                              <span className="d-none d-xl-inline">Edit</span>
                             </button>
 
                             <button
-                              className="btn btn-sm btn-outline-dark"
+                              className="btn btn-sm btn-outline-danger px-3"
+                              style={{ fontSize: '0.85rem' }}
                               onClick={() => setSelectedItem(item)}
+                              title="Delete item"
                             >
-                              <i className="bi bi-trash me-1"></i>
-                              <span className="d-none d-md-inline">Delete</span>
+                              <i className="bi bi-trash3 me-1"></i>
+                              <span className="d-none d-xl-inline">Delete</span>
                             </button>
                           </div>
                         </td>
@@ -288,14 +338,16 @@ const ItemsList = () => {
 
             {/* Table Footer */}
             {filteredItems.length > 0 && (
-              <div className="card-footer bg-white border-top py-3">
-                <div className="d-flex justify-content-between align-items-center">
+              <div className="card-footer bg-light border-top py-3">
+                <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <small className="text-muted">
-                    Showing {filteredItems.length} of {items.length} items
+                    <i className="bi bi-list-check me-1"></i>
+                    Showing <strong>{filteredItems.length}</strong> of <strong>{items.length}</strong> items
                   </small>
                   {search && (
-                    <small className="text-muted">
-                      Found {filteredItems.length} result{filteredItems.length !== 1 ? 's' : ''}
+                    <small className="badge bg-primary">
+                      <i className="bi bi-search me-1"></i>
+                      {filteredItems.length} result{filteredItems.length !== 1 ? 's' : ''}
                     </small>
                   )}
                 </div>

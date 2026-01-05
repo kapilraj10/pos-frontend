@@ -89,3 +89,30 @@ export const updateOrderStatus = async (orderId, status) => {
         throw error;
     }
 };
+
+// Get all orders (admin only)
+export const getAllOrders = async () => {
+    try {
+        const response = await axios.get(`${BASE_URL}/orders`, {
+            headers: getAuthHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all orders:", error);
+        throw error;
+    }
+};
+
+// Get revenue statistics
+export const getRevenueStats = async (period = 'all') => {
+    try {
+        const response = await axios.get(`${BASE_URL}/orders/stats/revenue`, {
+            params: { period },
+            headers: getAuthHeader()
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching revenue stats:", error);
+        throw error;
+    }
+};

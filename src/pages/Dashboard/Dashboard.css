@@ -11,6 +11,11 @@ body {
     color: #333;
 }
 
+/* Khalti Purple Badge */
+.bg-purple {
+    background-color: #5d2e8e !important;
+}
+
 /* Dashboard Container */
 .dashboard-container {
     padding: 20px;
@@ -39,8 +44,13 @@ body {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Header */
@@ -48,7 +58,7 @@ body {
     background: white;
     padding: 25px 30px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
     display: flex;
     justify-content: space-between;
@@ -131,7 +141,7 @@ body {
     background: white;
     padding: 25px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     display: flex;
     align-items: center;
     gap: 20px;
@@ -140,7 +150,7 @@ body {
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .stat-icon {
@@ -199,7 +209,7 @@ body {
     background: white;
     padding: 25px 30px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
 }
 
@@ -260,7 +270,7 @@ body {
     background: white;
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
 }
 
@@ -396,7 +406,7 @@ body {
     background: white;
     padding: 25px 30px;
     border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -449,24 +459,24 @@ body {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .filter-controls {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .date-filters {
         justify-content: center;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .payment-cards {
         grid-template-columns: 1fr;
     }
-    
+
     .dashboard-footer {
         flex-direction: column;
         text-align: center;
@@ -477,18 +487,456 @@ body {
     .dashboard-container {
         padding: 15px;
     }
-    
+
     .dashboard-header h1 {
         font-size: 24px;
     }
-    
+
     .stat-card {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .payment-card {
         flex-direction: column;
         text-align: center;
     }
+}
+
+/* Admin Dashboard Enhancements */
+.admin-dashboard-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+}
+
+.stats-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Table improvements */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+/* Badge improvements */
+.badge {
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.3px;
+}
+
+/* Button group improvements */
+.btn-group .btn {
+    margin: 0 2px;
+}
+
+/* Modal improvements */
+.modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+/* Empty state */
+.text-center .bi-inbox {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Responsive table */
+@media (max-width: 991px) {
+    .admin-dashboard-wrapper {
+        padding: 0;
+    }
+
+    .table-responsive {
+        border-radius: 0;
+    }
+}
+
+/* Custom scrollbar */
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ========================================
+   FULL-SCREEN ORDERS TABLE STYLES
+   ======================================== */
+
+/* Orders table full-screen container */
+.orders-table-fullscreen {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    height: calc(100vh - 120px);
+    /* Full height minus top spacing */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fixed table header with integrated filters */
+.table-header-fixed {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    border-bottom: 2px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Compact filter controls */
+.table-header-fixed .form-select-sm,
+.table-header-fixed .form-control-sm {
+    font-size: 0.875rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    transition: all 0.2s ease;
+}
+
+.table-header-fixed .form-select-sm:focus,
+.table-header-fixed .form-control-sm:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.table-header-fixed .form-select-sm:hover,
+.table-header-fixed .form-control-sm:hover {
+    border-color: #667eea;
+}
+
+/* Clear filters button */
+.table-header-fixed .btn-outline-secondary {
+    border-color: #dc3545;
+    color: #dc3545;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.5rem;
+    white-space: nowrap;
+}
+
+.table-header-fixed .btn-outline-secondary:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+/* Row spacing */
+.table-header-fixed .row.g-2 {
+    margin-top: 0.5rem;
+}
+
+/* Scrollable table container */
+.table-container-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    position: relative;
+    background: white;
+}
+
+/* Table scroll wrapper */
+.table-scroll-wrapper {
+    min-height: 100%;
+    width: 100%;
+}
+
+/* Orders table */
+.orders-table {
+    width: 100%;
+    margin-bottom: 0;
+    min-width: 1000px;
+    /* Minimum width for horizontal scroll */
+}
+
+/* Sticky table header inside scrollable area */
+.table-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.table-header-sticky th {
+    background: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+    font-weight: 600;
+    color: #495057;
+    letter-spacing: 0.3px;
+}
+
+/* Table rows */
+.orders-table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.orders-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.001);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.orders-table tbody td {
+    vertical-align: middle;
+    white-space: nowrap;
+    padding: 1rem 0.75rem;
+}
+
+/* Empty state full-screen */
+.empty-state-fullscreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 400px;
+    padding: 3rem;
+    text-align: center;
+}
+
+.empty-state-fullscreen .bi-inbox {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Custom scrollbar for table container */
+.table-container-scrollable::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.table-container-scrollable::-webkit-scrollbar-track {
+    background: #f1f3f5;
+    border-radius: 10px;
+}
+
+.table-container-scrollable::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    border: 2px solid #f1f3f5;
+}
+
+.table-container-scrollable::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #5568d3 0%, #653a8b 100%);
+}
+
+.table-container-scrollable::-webkit-scrollbar-corner {
+    background: #f1f3f5;
+}
+
+/* Optimize spacing - reduce margins */
+.admin-dashboard-wrapper .container-fluid {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Reduce spacing between sections */
+.admin-dashboard-wrapper .row.g-3.mb-4 {
+    margin-bottom: 1rem !important;
+}
+
+.admin-dashboard-wrapper .card.border-0.shadow-sm.mb-4 {
+    margin-bottom: 1rem !important;
+}
+
+/* Table cell optimization */
+.orders-table th,
+.orders-table td {
+    padding: 0.875rem 1rem;
+}
+
+/* Badge styling */
+.orders-table .badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* Button group styling */
+.orders-table .btn-group .btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1400px) {
+    .orders-table-fullscreen {
+        height: calc(100vh - 100px);
+    }
+
+    .orders-table {
+        min-width: 900px;
+    }
+}
+
+@media (max-width: 991px) {
+    .orders-table-fullscreen {
+        height: calc(100vh - 80px);
+        border-radius: 0;
+    }
+
+    .admin-dashboard-wrapper .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .orders-table {
+        min-width: 800px;
+        font-size: 0.9rem;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 0.75rem 0.75rem;
+    }
+
+    /* Compact filters on tablet */
+    .table-header-fixed .form-select-sm,
+    .table-header-fixed .form-control-sm {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .orders-table-fullscreen {
+        height: calc(100vh - 60px);
+    }
+
+    .table-header-fixed .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    /* Stack filters vertically on mobile */
+    .table-header-fixed .row.g-2 {
+        margin-top: 0.75rem;
+    }
+
+    .table-header-fixed .col-lg-3,
+    .table-header-fixed .col-lg-2,
+    .table-header-fixed .col-lg-4,
+    .table-header-fixed .col-lg-1 {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .table-header-fixed .btn-outline-secondary {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .orders-table {
+        min-width: 700px;
+        font-size: 0.85rem;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 0.65rem 0.5rem;
+    }
+
+    .empty-state-fullscreen {
+        padding: 2rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .orders-table {
+        min-width: 600px;
+        font-size: 0.8rem;
+    }
+
+    .orders-table .badge {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.65rem;
+    }
+
+    .orders-table .btn-group .btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Print optimization */
+@media print {
+    .orders-table-fullscreen {
+        height: auto;
+        box-shadow: none;
+    }
+
+    .table-header-fixed,
+    .orders-table .btn-group {
+        display: none;
+    }
+
+    .table-container-scrollable {
+        overflow: visible;
+    }
+}
+
+/* Performance optimization */
+.orders-table tbody tr {
+    will-change: background-color, transform;
+}
+
+/* Smooth scrolling */
+.table-container-scrollable {
+    scroll-behavior: smooth;
+}
+
+/* Loading state */
+.table-container-scrollable.loading {
+    opacity: 0.6;
+    pointer-events: none;
 }

@@ -350,14 +350,14 @@ const OrderHistory = () => {
         // Payment Method Section - SAME FORMAT, different content
         const paymentMethod = (order.paymentMethod || 'CASH').toUpperCase();
         let paymentClass = 'payment-badge payment-cash';
-        let paymentIcon = '💵';
+        let paymentIcon = '';
 
         if (paymentMethod === 'KHALTI' || paymentMethod.includes('KHALTI')) {
             paymentClass = 'payment-badge payment-khalti';
-            paymentIcon = '📱';
+            paymentIcon = '';
         } else if (paymentMethod === 'CARD' || paymentMethod.includes('CARD')) {
             paymentClass = 'payment-badge payment-card';
-            paymentIcon = '💳';
+            paymentIcon = '';
         }
 
         printWindow.document.write('<div class="divider"></div>');

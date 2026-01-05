@@ -74,9 +74,6 @@ const Menubar = () => {
             </li>
           )}
 
-
-
-
           {/* Manage Items - Only for ADMIN */}
           {isAdmin && (
             <li className="nav-item">
