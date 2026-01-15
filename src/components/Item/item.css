@@ -13,7 +13,8 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
+  /* Changed from hidden to visible to prevent badge clipping */
   position: relative;
   color: #0f172a;
 }
@@ -46,8 +47,10 @@
 
 .item-cart-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  /* Increased from 8px to keep within card */
+  right: 10px;
+  /* Increased from 8px to keep within card */
   background: #0f172a;
   color: #ffffff;
   font-size: 11px;
@@ -59,6 +62,8 @@
   gap: 6px;
   box-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
   z-index: 3;
+  max-width: calc(100% - 20px);
+  /* Prevent badge from exceeding card width */
 }
 
 /* Card (image top) styling to mimic bootstrap card */
@@ -72,6 +77,8 @@
   display: block;
   background-color: #f3f4f6;
   /* subtle placeholder */
+  border-radius: 10px 10px 0 0;
+  /* Match card border radius */
 }
 
 .card-body {
@@ -346,8 +353,12 @@
   .item-cart-badge {
     font-size: 9px;
     padding: 2px 6px;
-    top: 4px;
-    right: 4px;
+    top: 6px;
+    /* Adjusted for better positioning on small screens */
+    right: 6px;
+    /* Adjusted for better positioning on small screens */
+    max-width: calc(100% - 12px);
+    /* Prevent overflow on small screens */
   }
 }
 
