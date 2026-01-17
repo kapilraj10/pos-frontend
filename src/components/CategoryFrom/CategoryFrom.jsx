@@ -16,6 +16,7 @@ const CategoryForm = () => {
     description: "",
     bgColor: "#000000",
   });
+  const [errors, setErrors] = useState({ name: null });
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -24,9 +25,12 @@ const CategoryForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // simple inline validation (show inline error instead of toast popup)
     if (!data.name.trim()) {
-      return toast.error("Category name is required");
+      setErrors({ ...errors, name: "Category name is required" });
+      return;
     }
+    setErrors({ ...errors, name: null });
 
     try {
       setLoading(true);
@@ -74,6 +78,11 @@ const CategoryForm = () => {
                 className="form-control"
                 placeholder="Enter category name"
               />
+              {errors.name && (
+                <div className="text-danger mt-1" style={{ fontSize: '0.9rem' }}>
+                  {errors.name}
+                </div>
+              )}
             </div>
 
             {/* Description */}

@@ -95,11 +95,9 @@ const App = () => {
             style={{
               zIndex: 9999,
               top: "1rem",
-              width: "100%",
               maxWidth: "360px",
               left: "50%",
               transform: "translateX(-50%)",
-              padding: "0 10px",
             }}
           />
         )}
