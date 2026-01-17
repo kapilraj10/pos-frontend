@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import { AppContext } from "../../context/AppContext.jsx";
 import { addCategory } from "../../Service/CategoryService.js";
 import { toast } from "react-toastify";
@@ -8,6 +8,8 @@ const CategoryForm = () => {
   const { categories, setCategories } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
 
   const [data, setData] = useState({
     name: "",
@@ -43,6 +45,8 @@ const CategoryForm = () => {
         toast.success("Category added");
         setData({ name: "", description: "", bgColor: "#000000" });
         setImageFile(null);
+        setPreviewUrl(null);
+        if (fileInputRef.current) fileInputRef.current.value = null;
       }
     } catch (error) {
       console.error("Error adding category:", error);
@@ -101,15 +105,26 @@ const CategoryForm = () => {
             <div className="mb-4">
               <label className="form-label">Category Image</label>
               <input
+                ref={fileInputRef}
                 type="file"
                 className="form-control"
                 accept="image/*"
-                onChange={(e) => setImageFile(e.target.files[0])}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setImageFile(file || null);
+                  if (file) setPreviewUrl(URL.createObjectURL(file));
+                }}
               />
+
+              {previewUrl && (
+                <div className="mt-3 category-image-preview">
+                  <img src={previewUrl} alt="preview" />
+                </div>
+              )}
             </div>
 
             {/* Buttons */}
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 form-actions">
               <button
                 type="submit"
                 className="btn btn-dark"
@@ -124,6 +139,8 @@ const CategoryForm = () => {
                 onClick={() => {
                   setData({ name: "", description: "", bgColor: "#000000" });
                   setImageFile(null);
+                  setPreviewUrl(null);
+                  if (fileInputRef.current) fileInputRef.current.value = null;
                 }}
               >
                 Clear

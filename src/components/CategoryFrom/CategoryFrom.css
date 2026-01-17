@@ -13,6 +13,8 @@
     height: 100%;
     background: #ffffff;
     border-radius: 12px;
+    display: flex;
+    flex-direction: column;
 }
 
 .category-form .card-body {
@@ -20,6 +22,9 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    position: relative;
 }
 
 /* Title */
@@ -59,6 +64,35 @@
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     outline: none;
+}
+
+/* Image preview */
+.category-image-preview {
+    width: 120px;
+    height: 80px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.category-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Color input with swatch */
+.category-color-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-color-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
 }
 
 /* Textarea */
@@ -109,6 +143,16 @@
 .category-form .btn-outline-secondary:hover {
     background: #f3f4f6;
     border-color: #9ca3af;
+}
+
+/* Sticky form actions so the Add Category button is always visible */
+.category-form .form-actions {
+    position: sticky;
+    bottom: 0.5rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+    padding-top: 0.75rem;
+    padding-bottom: 0.25rem;
+    z-index: 10;
 }
 
 /* Responsive */
